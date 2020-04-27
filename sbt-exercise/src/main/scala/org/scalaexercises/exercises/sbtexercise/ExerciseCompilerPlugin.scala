@@ -112,7 +112,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
    * back to `src/main/[scala|test|...]`.
    */
   private def reconfigureSub(key: SettingKey[File]): Def.Initialize[File] =
-    Def.setting { (ThisScope.copy(config = Global.config) / key).value / "main" }
+    Def.setting((ThisScope.copy(config = Global.config) / key).value / "main")
 
   // for most of the work below, a captured error is an error message and/or a
   // throwable value

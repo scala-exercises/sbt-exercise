@@ -147,10 +147,10 @@ object SourceTextExtraction {
       // visitMethodExpr as trailing params on each recursive call
       @tailrec def traversal(trees: List[(Path[g.type], Int, Tree)], acc: A): A = trees match {
         case Nil => acc
-        case (path, order, tree) :: rs =>
+        case (path, _, tree) :: rs =>
           tree match {
 
-            case DocDef(comment, moduleDef @ ModuleDef(mods, _, impl)) =>
+            case DocDef(comment, moduleDef @ ModuleDef(_, _, impl)) =>
               val nextPath = moduleDef.name :: path
               traversal(
                 impl.body.zipWithIndex.map { case (body, index) => (nextPath, index, body) } ::: rs,
@@ -158,14 +158,14 @@ object SourceTextExtraction {
               )
 
             // TODO: is this needed?
-            case DocDef(comment, classDef @ ClassDef(mods, _, Nil, impl)) =>
+            case DocDef(comment, classDef @ ClassDef(_, _, Nil, impl)) =>
               val nextPath = classDef.name :: path
               traversal(
                 impl.body.zipWithIndex.map { case (body, index) => (nextPath, index, body) } ::: rs,
                 visitDocComment(nextPath.reverse, comment, acc)
               )
 
-            case DocDef(comment, q"def $tname(...$paramss): $tpt = $expr") =>
+            case DocDef(comment, q"def $tname(...$_): $_ = $expr") =>
               val nextPath         = tname :: path
               val nextPathReversed = nextPath.reverse
               traversal(
@@ -177,7 +177,7 @@ object SourceTextExtraction {
                 )
               )
 
-            case moduleDef @ ModuleDef(mods, _, impl) =>
+            case moduleDef @ ModuleDef(_, _, impl) =>
               val nextPath = moduleDef.name :: path
               traversal(
                 impl.body.zipWithIndex.map { case (body, index) => (nextPath, index, body) } ::: rs,
@@ -185,22 +185,12 @@ object SourceTextExtraction {
               )
 
             // TODO: is this needed?
-            case classDef @ ClassDef(mods, _, Nil, impl) =>
+            case classDef @ ClassDef(_, _, Nil, impl) =>
               val nextPath = classDef.name :: path
               traversal(
                 impl.body.zipWithIndex.map { case (body, index) => (nextPath, index, body) } ::: rs,
                 acc
               )
-
-            /*
-          // TODO: can this be removed?
-          case q"def $tname(...$paramss): $tpt = $expr" =>
-            val nextPath = tname :: path
-            traversal(
-              (nextPath, 0, expr) :: rs,
-              acc
-            )
-             */
 
             case q"package $ref { ..$topstats }" =>
               val nextPath =

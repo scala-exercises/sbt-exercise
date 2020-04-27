@@ -315,20 +315,20 @@ private[compiler] object CommentRendering {
     }
 
   private[this] def renderInline(inl: Inline): NodeSeq = inl match {
-    case Chain(items)             => items flatMap renderInline
-    case Italic(in)               => <i>{renderInline(in)}</i>
-    case Bold(in)                 => <b>{renderInline(in)}</b>
-    case Underline(in)            => <u>{renderInline(in)}</u>
-    case Superscript(in)          => <sup>{renderInline(in)}</sup>
-    case Subscript(in)            => <sub>{renderInline(in)}</sub>
-    case Link(raw, title)         => <a href={raw} target="_blank">{renderInline(title)}</a>
-    case Monospace(in)            => <code>{renderInline(in)}</code>
-    case Text(text)               => scala.xml.Text(text)
-    case Summary(in)              => renderInline(in)
-    case HtmlTag(tag)             => scala.xml.Unparsed(tag)
-    case EntityLink(target, link) => renderLink(target, link, hasLinks = true)
+    case Chain(items)          => items flatMap renderInline
+    case Italic(in)            => <i>{renderInline(in)}</i>
+    case Bold(in)              => <b>{renderInline(in)}</b>
+    case Underline(in)         => <u>{renderInline(in)}</u>
+    case Superscript(in)       => <sup>{renderInline(in)}</sup>
+    case Subscript(in)         => <sub>{renderInline(in)}</sub>
+    case Link(raw, title)      => <a href={raw} target="_blank">{renderInline(title)}</a>
+    case Monospace(in)         => <code>{renderInline(in)}</code>
+    case Text(text)            => scala.xml.Text(text)
+    case Summary(in)           => renderInline(in)
+    case HtmlTag(tag)          => scala.xml.Unparsed(tag)
+    case EntityLink(target, _) => renderLink(target)
   }
 
-  private[this] def renderLink(text: Inline, link: LinkTo, hasLinks: Boolean) = renderInline(text)
+  private[this] def renderLink(text: Inline) = renderInline(text)
 
 }

@@ -1,3 +1,3 @@
-# Scala Exercises Runtime
+# sbt-exercise
 
-This library brings the runtime utilities used by the [scala-exercises](https://github.com/scala-exercises/scala-exercises) server.
+This sbt plugin brings the ability to compile the library exercises defined for the [scala-exercises](https://github.com/scala-exercises/scala-exercises) server.

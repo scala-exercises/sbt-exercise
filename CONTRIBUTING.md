@@ -4,18 +4,18 @@
 
 # Contributing
 
-Discussion around _scala-exercises_ happens in the [GitHub issues](https://github.com/scala-exercises/scala-exercises/issues) and [pull requests](https://github.com/scala-exercises/scala-exercises/pulls).
+Discussion around _sbt-exercise_ happens in the [GitHub issues](https://github.com/scala-exercises/sbt-exercise/issues) and [pull requests](https://github.com/scala-exercises/sbt-exercise/pulls).
 
 Feel free to open an issue if you notice a bug, have an idea for a feature, or have a question about
 the code. Pull requests are also welcome.
 
-People are expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md) when discussing _scala-exercises_ on the Github page or other venues.
+People are expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md) when discussing _sbt-exercise_ on the Github page or other venues.
 
-If you are being harassed, please contact one of [us](AUTHORS.md#maintainers) immediately so that we can support you. In case you cannot get in touch with us please write an email to [47 Degrees](mailto:scala-exercises@47deg.com).
+If you are being harassed, please contact one of [us](AUTHORS.md#maintainers) immediately so that we can support you. In case you cannot get in touch with us please write an email to [47 Degrees Open Source](mailto:hello@47deg.com).
 
 ## How can I help?
 
-_scala-exercises_ follows a standard [fork and pull](https://help.github.com/articles/using-pull-requests/) model for contributions via GitHub pull requests.
+_sbt-exercise_ follows a standard [fork and pull](https://help.github.com/articles/using-pull-requests/) model for contributions via GitHub pull requests.
 
 The process is simple:
 

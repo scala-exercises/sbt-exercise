@@ -6,9 +6,10 @@ publish / skip := true
 
 addCommandAlias(
   "ci-test",
-  ";scalafmtCheckAll; scalafmtSbtCheck; +test; +publishLocal; sbt-exercise/test; sbt-exercise/scripted"
+  ";scalafmtCheckAll; scalafmtSbtCheck; +test; +publishLocal; sbt-exercise/scripted"
 )
-addCommandAlias("ci-docs", ";github; project-docs/mdoc; headerCreateAll")
+addCommandAlias("ci-docs", ";github; mdoc; headerCreateAll")
+addCommandAlias("ci-publish", ";github; ci-release")
 
 lazy val V = new {
   val cats: String                = "2.1.1"

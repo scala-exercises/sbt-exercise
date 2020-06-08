@@ -23,13 +23,6 @@ lazy val V = new {
   val scalatest: String           = "3.1.1"
 }
 
-lazy val root = project
-  .in(file("."))
-  .settings(moduleName := "sbt-exercise")
-  .settings(skip in publish := true)
-  .aggregate(definitions, compiler, `sbt-exercise`)
-  .dependsOn(definitions, compiler, `sbt-exercise`)
-
 lazy val definitions = (project in file("definitions"))
   .settings(name := "definitions")
   .settings(

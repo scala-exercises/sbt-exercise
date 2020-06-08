@@ -96,10 +96,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
   .enablePlugins(SbtPlugin)
   .enablePlugins(BuildInfoPlugin)
 
-lazy val `project-docs` = (project in file(".docs"))
-  .aggregate(definitions, compiler)
-  .settings(moduleName := "sbt-exercise-project-docs")
-  .settings(mdocIn := file(".docs"))
+lazy val documentation = project
   .settings(mdocOut := file("."))
-  .settings(skip in publish := true)
+  .settings(publish / skip := true)
   .enablePlugins(MdocPlugin)

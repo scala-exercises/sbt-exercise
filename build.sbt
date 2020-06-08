@@ -2,17 +2,20 @@ ThisBuild / organization := "org.scala-exercises"
 ThisBuild / githubOrganization := "47degrees"
 ThisBuild / scalaVersion := V.scala212
 
+publish / skip := true
+
 addCommandAlias(
   "ci-test",
-  ";scalafmtCheckAll; scalafmtSbtCheck; +test; +publishLocal; sbt-exercise/test; sbt-exercise/scripted"
+  ";scalafmtCheckAll; scalafmtSbtCheck; +test; +publishLocal; sbt-exercise/scripted"
 )
-addCommandAlias("ci-docs", ";github; project-docs/mdoc; headerCreateAll")
+addCommandAlias("ci-docs", ";github; mdoc; headerCreateAll")
+addCommandAlias("ci-publish", ";github; ci-release")
 
 lazy val V = new {
   val cats: String                = "2.1.1"
   val collectioncompat: String    = "2.1.6"
   val github4s: String            = "0.24.0"
-  val http4s: String              = "0.21.3"
+  val http4s: String              = "0.21.4"
   val runtime: String             = "0.6.0"
   val scala: String               = "2.13.2"
   val scala212: String            = "2.12.11"
@@ -20,15 +23,8 @@ lazy val V = new {
   val scalacheckShapeless: String = "1.2.5"
   val scalamacros: String         = "2.1.1"
   val scalariform: String         = "0.2.10"
-  val scalatest: String           = "3.1.1"
+  val scalatest: String           = "3.1.2"
 }
-
-lazy val root = project
-  .in(file("."))
-  .settings(moduleName := "sbt-exercise")
-  .settings(skip in publish := true)
-  .aggregate(definitions, compiler, `sbt-exercise`)
-  .dependsOn(definitions, compiler, `sbt-exercise`)
 
 lazy val definitions = (project in file("definitions"))
   .settings(name := "definitions")
@@ -69,10 +65,8 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
   .settings(name := "sbt-exercise")
   .settings(
     scalacOptions -= "-Xfatal-warnings",
-    libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-core" % V.cats % Compile
-    ),
     scalacOptions += "-Ypartial-unification",
+    libraryDependencies += "org.typelevel" %% "cats-core" % V.cats % Compile,
     addCompilerPlugin("org.scalamacros" % "paradise" % V.scalamacros cross CrossVersion.full),
     // Leverage build info to populate compiler classpath--
     compilerClasspath := { fullClasspath in (compiler, Compile) }.value,
@@ -102,10 +96,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
   .enablePlugins(SbtPlugin)
   .enablePlugins(BuildInfoPlugin)
 
-lazy val `project-docs` = (project in file(".docs"))
-  .aggregate(definitions, compiler)
-  .settings(moduleName := "sbt-exercise-project-docs")
-  .settings(mdocIn := file(".docs"))
+lazy val documentation = project
   .settings(mdocOut := file("."))
-  .settings(skip in publish := true)
+  .settings(publish / skip := true)
   .enablePlugins(MdocPlugin)

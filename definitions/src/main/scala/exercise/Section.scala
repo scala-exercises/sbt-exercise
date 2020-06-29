@@ -16,6 +16,7 @@
 
 package org.scalaexercises.definitions
 
-/** Marker trait for exercise sections.
+/**
+ * Marker trait for exercise sections.
  */
 trait Section

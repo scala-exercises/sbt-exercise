@@ -96,14 +96,16 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   )
   // format: ON
 
-  def redirSettings = Seq(
-    // v0.13.9/main/src/main/scala/sbt/Defaults.scala
-    sourceDirectory := reconfigureSub(sourceDirectory).value,
-    sourceManaged := reconfigureSub(sourceManaged).value,
-    resourceManaged := reconfigureSub(resourceManaged).value
-  )
+  def redirSettings =
+    Seq(
+      // v0.13.9/main/src/main/scala/sbt/Defaults.scala
+      sourceDirectory := reconfigureSub(sourceDirectory).value,
+      sourceManaged := reconfigureSub(sourceManaged).value,
+      resourceManaged := reconfigureSub(resourceManaged).value
+    )
 
-  /** Helper to facilitate changing the directories. By default, a configuration
+  /**
+   * Helper to facilitate changing the directories. By default, a configuration
    * inheriting from Compile will compile source in
    * `src/<configuration_name>/[scala|test|...]`. This forces the directory
    * back to `src/main/[scala|test|...]`.
@@ -120,7 +122,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   private def catching[A](f: => A)(msg: => String) =
     Either.catchNonFatal(f).leftMap(e => Ior.both(msg, e))
 
-  /** Given an Analysis output from a compile run, this will
+  /**
+   * Given an Analysis output from a compile run, this will
    * identify all modules implementing `exercise.Library`.
    */
   private def discoverLibraries(analysis: CompileAnalysis): Seq[String] =
@@ -152,118 +155,126 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   }
 
   // worker task that invokes the exercise compiler
-  def generateExercisesTask = Def.task {
-    val log             = streams.value.log
-    val baseDir         = (baseDirectory in Compile).value
-    lazy val analysisIn = (Compile / compile).value
+  def generateExercisesTask =
+    Def.task {
+      val log             = streams.value.log
+      val baseDir         = (baseDirectory in Compile).value
+      lazy val analysisIn = (Compile / compile).value
 
-    lazy val libraryNames = discoverLibraries(analysisIn)
-    lazy val sectionNames = discoverSections(analysisIn)
+      lazy val libraryNames = discoverLibraries(analysisIn)
+      lazy val sectionNames = discoverSections(analysisIn)
 
-    val libraryClasspath = Attributed.data((fullClasspath in Compile).value)
-    val classpath        = (Meta.compilerClasspath ++ libraryClasspath).distinct
-    val loader = ClasspathUtilities.toLoader(
-      classpath,
-      null,
-      ClasspathUtilities.createClasspathResources(
-        appPaths = Meta.compilerClasspath,
-        bootPaths = scalaInstance.value.allJars
-      )
-    )
-
-    val libMetaInfoClass = catching(
-      loader
-        .loadClass("org.scalaexercises.content.LibMetaInfo$")
-    )("Unable to find LibMetaInfo class")
-      .fold({
-        case Ior.Left(message) => throw new Exception(message)
-        case Ior.Right(error)  => throw error
-        case Ior.Both(message, error) =>
-          log.error(message)
-          throw error
-      }, identity)
-
-    val metaInfo = libMetaInfoClass
-      .getField("MODULE$")
-      .get(libMetaInfoClass)
-
-    def loadLibraryModule(name: String) =
-      for {
-        loadedClass <- catching(loader.loadClass(name + "$"))(s"$name not found")
-        loadedModule <- catching(loadedClass.getField("MODULE$").get(null))(
-          s"$name must be defined as an object"
+      val libraryClasspath = Attributed.data((fullClasspath in Compile).value)
+      val classpath        = (Meta.compilerClasspath ++ libraryClasspath).distinct
+      val loader = ClasspathUtilities.toLoader(
+        classpath,
+        null,
+        ClasspathUtilities.createClasspathResources(
+          appPaths = Meta.compilerClasspath,
+          bootPaths = scalaInstance.value.allJars
         )
-      } yield loadedModule
+      )
 
-    def invokeCompiler(
-        compiler: COMPILER,
-        library: AnyRef
-    ): Either[Err, (String, String)] =
-      Either.catchNonFatal {
-        val sourceCodes = (libraryNames ++ sectionNames).distinct
-          .flatMap(analysisIn match {
-            case analysis: Analysis => analysis.relations.definesClass
-          })
-          .map(file => (file.getPath, IO.read(file)))
+      val libMetaInfoClass = catching(
+        loader
+          .loadClass("org.scalaexercises.content.LibMetaInfo$")
+      )("Unable to find LibMetaInfo class")
+        .fold(
+          {
+            case Ior.Left(message) => throw new Exception(message)
+            case Ior.Right(error)  => throw error
+            case Ior.Both(message, error) =>
+              log.error(message)
+              throw error
+          },
+          identity
+        )
 
-        captureStdStreams(
-          fOut = log.info(_: String),
-          fErr = log.error(_: String)
-        ) {
-          compiler
-            .compile(
-              library = library,
-              sources = sourceCodes.map(_._2).toArray,
-              paths = sourceCodes.map(_._1).toArray,
-              buildMetaInfo = metaInfo,
-              baseDir = baseDir.getPath,
-              targetPackage = "org.scalaexercises.content",
-              fetchContributors = fetchContributors.value
-            )
-            .toList
+      val metaInfo = libMetaInfoClass
+        .getField("MODULE$")
+        .get(libMetaInfoClass)
+
+      def loadLibraryModule(name: String) =
+        for {
+          loadedClass <- catching(loader.loadClass(name + "$"))(s"$name not found")
+          loadedModule <- catching(loadedClass.getField("MODULE$").get(null))(
+            s"$name must be defined as an object"
+          )
+        } yield loadedModule
+
+      def invokeCompiler(
+          compiler: COMPILER,
+          library: AnyRef
+      ): Either[Err, (String, String)] =
+        Either.catchNonFatal {
+          val sourceCodes = (libraryNames ++ sectionNames).distinct
+            .flatMap(analysisIn match {
+              case analysis: Analysis => analysis.relations.definesClass
+            })
+            .map(file => (file.getPath, IO.read(file)))
+
+          captureStdStreams(
+            fOut = log.info(_: String),
+            fErr = log.error(_: String)
+          ) {
+            compiler
+              .compile(
+                library = library,
+                sources = sourceCodes.map(_._2).toArray,
+                paths = sourceCodes.map(_._1).toArray,
+                buildMetaInfo = metaInfo,
+                baseDir = baseDir.getPath,
+                targetPackage = "org.scalaexercises.content",
+                fetchContributors = fetchContributors.value
+              )
+              .toList
+          }
+        } leftMap (e => e: Err) >>= {
+          case mn :: moduleSource :: Nil =>
+            Right(mn -> moduleSource)
+          case _ =>
+            Left("Unexpected return value from exercise compiler": Err)
         }
-      } leftMap (e => e: Err) >>= {
-        case mn :: moduleSource :: Nil =>
-          Right(mn -> moduleSource)
-        case _ =>
-          Left("Unexpected return value from exercise compiler": Err)
-      }
 
-    val result = for {
-      compilerClass <- catching(loader.loadClass(COMPILER_CLASS))(
-        "Unable to find exercise compiler class"
-      )
-      compiler <- catching(compilerClass.newInstance.asInstanceOf[COMPILER])(
-        "Unable to create instance of exercise compiler"
-      )
-      libraries <- libraryNames.toList.traverse(loadLibraryModule)
-      result    <- libraries.traverse(invokeCompiler(compiler, _))
-    } yield result
+      val result = for {
+        compilerClass <- catching(loader.loadClass(COMPILER_CLASS))(
+          "Unable to find exercise compiler class"
+        )
+        compiler <- catching(compilerClass.newInstance.asInstanceOf[COMPILER])(
+          "Unable to create instance of exercise compiler"
+        )
+        libraries <- libraryNames.toList.traverse(loadLibraryModule)
+        result    <- libraries.traverse(invokeCompiler(compiler, _))
+      } yield result
 
-    result.fold({
-      case Ior.Left(message) => throw new Exception(message)
-      case Ior.Right(error)  => throw error
-      case Ior.Both(message, error) =>
-        log.error(message)
-        throw error
-    }, identity)
-  }
+      result.fold(
+        {
+          case Ior.Left(message) => throw new Exception(message)
+          case Ior.Right(error)  => throw error
+          case Ior.Both(message, error) =>
+            log.error(message)
+            throw error
+        },
+        identity
+      )
+    }
 
   // task responsible for outputting the source files
-  def generateExerciseSourcesTask = Def.task {
-    val log = streams.value.log
+  def generateExerciseSourcesTask =
+    Def.task {
+      val log = streams.value.log
 
-    val generated = generateExercises.value
+      val generated = generateExercises.value
 
-    val dir = (sourceManaged in Compile).value
-    generated.map {
-      case (n, code) =>
-        val file = dir / (n.replace(".", "/") + ".scala")
-        IO.write(file, code)
-        log.info(s"Generated library at $file")
-        file
+      val dir = (sourceManaged in Compile).value
+      generated.map {
+        case (n, code) =>
+          val file = dir / (n.replace(".", "/") + ".scala")
+          IO.write(file, code)
+          log.info(s"Generated library at $file")
+          file
+      }
     }
-  }
 
   private[this] def captureStdStreams[T](
       fOut: (String) => Unit,
@@ -279,7 +290,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     res
   }
 
-  /** Output stream that captures an output on a line by line basis.
+  /**
+   * Output stream that captures an output on a line by line basis.
    *
    * @param f the function to invoke with each line
    */

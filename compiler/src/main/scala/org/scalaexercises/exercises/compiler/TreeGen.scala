@@ -20,7 +20,8 @@ import scala.reflect.api.Universe
 
 import org.scalaexercises.compiler.formatting._
 
-/** This is responsible for generating exercise code. It generates
+/**
+ * This is responsible for generating exercise code. It generates
  * scala compiler trees, which can be evaluated or rendered to
  * source code.
  */
@@ -157,15 +158,16 @@ case class TreeGen[U <: Universe](
   }
 
   private def makeRefTree(path: String): RefTree = {
-    def go(rem: List[String]): RefTree = rem match {
-      case head :: Nil  => Ident(TermName(head))
-      case head :: tail => Select(go(tail), TermName(head))
-      case Nil          =>
-        // This situation should never occur, and definitely not during
-        // recursion of this method. Assume we got here because path.split
-        // below resulted in an empty list.
-        Ident(TermName(path))
-    }
+    def go(rem: List[String]): RefTree =
+      rem match {
+        case head :: Nil  => Ident(TermName(head))
+        case head :: tail => Select(go(tail), TermName(head))
+        case Nil          =>
+          // This situation should never occur, and definitely not during
+          // recursion of this method. Assume we got here because path.split
+          // below resulted in an empty list.
+          Ident(TermName(path))
+      }
     go(path.split('.').toList.reverse)
   }
 

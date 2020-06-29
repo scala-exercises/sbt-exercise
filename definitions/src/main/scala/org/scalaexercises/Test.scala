@@ -30,8 +30,8 @@ import org.scalacheck.Shapeless._
 
 object Test {
 
-  def testSuccess[F, R, L <: HList](method: F, answer: L)(
-      implicit A: Arbitrary[L],
+  def testSuccess[F, R, L <: HList](method: F, answer: L)(implicit
+      A: Arbitrary[L],
       fntop: FnToProduct.Aux[F, L => R]
   ): Prop = {
     val rightGen = genRightAnswer(answer)
@@ -58,8 +58,8 @@ object Test {
   def genRightAnswer[L <: HList](answer: L): Gen[L] =
     Gen.const(answer)
 
-  def genWrongAnswer[L <: HList](l: L)(
-      implicit A: Arbitrary[L]
+  def genWrongAnswer[L <: HList](l: L)(implicit
+      A: Arbitrary[L]
   ): Gen[L] =
     A.arbitrary.suchThat(_ != l)
 }

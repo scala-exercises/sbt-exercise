@@ -194,7 +194,7 @@ class CommentParsingRenderingSpec extends AnyFunSpec with Matchers with Inside {
           case Left(_) =>
         }
       }
-     */
+       */
 
     }
 

@@ -128,8 +128,8 @@ case class Compiler() {
         symbol <- internal.instanceToClassSymbol(library)
         symbolPath = internal.symbolToPath(symbol)
         comment <- (internal
-          .resolveComment(symbolPath)
-          .flatMap(Comments.parseAndRender[Mode.Library]))
+            .resolveComment(symbolPath)
+            .flatMap(Comments.parseAndRender[Mode.Library]))
           .leftMap(enhanceDocError(symbolPath))
         sections <- checkEmptySectionList(symbol, library).flatMap {
           _.sections
@@ -190,23 +190,26 @@ case class Compiler() {
       val symbolPath = internal.symbolToPath(symbol)
       val filePath   = extracted.symbolPaths.get(symbol.toString).filterNot(_.isEmpty)
       for {
-        comment <- internal
-          .resolveComment(symbolPath)
-          .flatMap(Comments.parseAndRender[Mode.Section])
-          .leftMap(enhanceDocError(symbolPath))
+        comment <-
+          internal
+            .resolveComment(symbolPath)
+            .flatMap(Comments.parseAndRender[Mode.Section])
+            .leftMap(enhanceDocError(symbolPath))
 
-        contributions = (if (fetchContributors) filePath else None).fold(
-          List.empty[ContributionInfo]
-        )(path => fetchContributions(library.owner, library.repository, path))
+        contributions =
+          (if (fetchContributors) filePath else None).fold(
+            List.empty[ContributionInfo]
+          )(path => fetchContributions(library.owner, library.repository, path))
 
-        exercises <- symbol.toType.decls.toList
-          .filter(symbol =>
-            symbol.isPublic && !symbol.isSynthetic &&
-              symbol.name != termNames.CONSTRUCTOR && symbol.isMethod
-          )
-          .map(_.asMethod)
-          .filterNot(_.isGetter)
-          .traverse(maybeMakeExerciseInfo)
+        exercises <-
+          symbol.toType.decls.toList
+            .filter(symbol =>
+              symbol.isPublic && !symbol.isSynthetic &&
+                symbol.name != termNames.CONSTRUCTOR && symbol.isMethod
+            )
+            .map(_.asMethod)
+            .filterNot(_.isGetter)
+            .traverse(maybeMakeExerciseInfo)
       } yield SectionInfo(
         symbol = symbol,
         comment = comment,
@@ -222,10 +225,11 @@ case class Compiler() {
       val symbolPath = internal.symbolToPath(symbol)
       val pkgName    = symbolPath.headOption.fold("defaultPkg")(identity)
       for {
-        comment <- internal
-          .resolveComment(symbolPath)
-          .flatMap(Comments.parseAndRender[Mode.Exercise])
-          .leftMap(enhanceDocError(symbolPath))
+        comment <-
+          internal
+            .resolveComment(symbolPath)
+            .flatMap(Comments.parseAndRender[Mode.Exercise])
+            .leftMap(enhanceDocError(symbolPath))
         method <- internal.resolveMethod(symbolPath)
       } yield ExerciseInfo(
         symbol = symbol,
@@ -362,10 +366,11 @@ case class Compiler() {
       process(symbol).reverse
     }
 
-    private[compiler] def unapplyRawName(name: Name): String = name match {
-      case TermName(value) => value
-      case TypeName(value) => value
-    }
+    private[compiler] def unapplyRawName(name: Name): String =
+      name match {
+        case TermName(value) => value
+        case TypeName(value) => value
+      }
 
     private lazy val EMPTY_PACKAGE_NAME_STRING = unapplyRawName(termNames.EMPTY_PACKAGE_NAME)
     private lazy val ROOTPKG_STRING            = unapplyRawName(termNames.ROOTPKG)

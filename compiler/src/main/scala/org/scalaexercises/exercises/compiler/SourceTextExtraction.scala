@@ -69,10 +69,11 @@ class SourceTextExtraction {
     val compilationUnits = run.units.toList // `units` is only only iterable once!
     val extractions      = compilationUnits.map(_.body).map(boundExtractRaw)
 
-    def nameToString(name: Name) = name match {
-      case TermName(value) => value
-      case TypeName(value) => value
-    }
+    def nameToString(name: Name) =
+      name match {
+        case TermName(value) => value
+        case TypeName(value) => value
+      }
 
     def expandPath[T](kv: (List[global.Name], T)): (List[String], T) =
       (kv._1.map(nameToString), kv._2)
@@ -116,7 +117,8 @@ class SourceTextExtraction {
 
 }
 
-/** Utility to find doc exercise-worthy comments and source code blobs
+/**
+ * Utility to find doc exercise-worthy comments and source code blobs
  * in a tree.
  */
 object SourceTextExtraction {
@@ -132,7 +134,8 @@ object SourceTextExtraction {
   def extractRaw[G <: Global](g: G)(rootTree: g.Tree): RawAcc[g.type] = {
     import g._
 
-    /** Define generic accumulating traversal that visits all the nodes of
+    /**
+     * Define generic accumulating traversal that visits all the nodes of
      * interest.
      */
     def traverse[A](
@@ -145,75 +148,86 @@ object SourceTextExtraction {
 
       // a nested function so that we don't have to include visitDocComment and
       // visitMethodExpr as trailing params on each recursive call
-      @tailrec def traversal(trees: List[(Path[g.type], Int, Tree)], acc: A): A = trees match {
-        case Nil => acc
-        case (path, _, tree) :: rs =>
-          tree match {
+      @tailrec def traversal(trees: List[(Path[g.type], Int, Tree)], acc: A): A =
+        trees match {
+          case Nil => acc
+          case (path, _, tree) :: rs =>
+            tree match {
 
-            case DocDef(comment, moduleDef @ ModuleDef(_, _, impl)) =>
-              val nextPath = moduleDef.name :: path
-              traversal(
-                impl.body.zipWithIndex.map { case (body, index) => (nextPath, index, body) } ::: rs,
-                visitDocComment(nextPath.reverse, comment, acc)
-              )
-
-            // TODO: is this needed?
-            case DocDef(comment, classDef @ ClassDef(_, _, Nil, impl)) =>
-              val nextPath = classDef.name :: path
-              traversal(
-                impl.body.zipWithIndex.map { case (body, index) => (nextPath, index, body) } ::: rs,
-                visitDocComment(nextPath.reverse, comment, acc)
-              )
-
-            case DocDef(comment, q"def $tname(...$_): $_ = $expr") =>
-              val nextPath         = tname :: path
-              val nextPathReversed = nextPath.reverse
-              traversal(
-                rs,
-                visitMethodExpr(
-                  nextPathReversed,
-                  expr,
-                  visitDocComment(nextPathReversed, comment, acc)
+              case DocDef(comment, moduleDef @ ModuleDef(_, _, impl)) =>
+                val nextPath = moduleDef.name :: path
+                traversal(
+                  impl.body.zipWithIndex.map {
+                    case (body, index) => (nextPath, index, body)
+                  } ::: rs,
+                  visitDocComment(nextPath.reverse, comment, acc)
                 )
-              )
 
-            case moduleDef @ ModuleDef(_, _, impl) =>
-              val nextPath = moduleDef.name :: path
-              traversal(
-                impl.body.zipWithIndex.map { case (body, index) => (nextPath, index, body) } ::: rs,
-                acc
-              )
+              // TODO: is this needed?
+              case DocDef(comment, classDef @ ClassDef(_, _, Nil, impl)) =>
+                val nextPath = classDef.name :: path
+                traversal(
+                  impl.body.zipWithIndex.map {
+                    case (body, index) => (nextPath, index, body)
+                  } ::: rs,
+                  visitDocComment(nextPath.reverse, comment, acc)
+                )
 
-            // TODO: is this needed?
-            case classDef @ ClassDef(_, _, Nil, impl) =>
-              val nextPath = classDef.name :: path
-              traversal(
-                impl.body.zipWithIndex.map { case (body, index) => (nextPath, index, body) } ::: rs,
-                acc
-              )
+              case DocDef(comment, q"def $tname(...$_): $_ = $expr") =>
+                val nextPath         = tname :: path
+                val nextPathReversed = nextPath.reverse
+                traversal(
+                  rs,
+                  visitMethodExpr(
+                    nextPathReversed,
+                    expr,
+                    visitDocComment(nextPathReversed, comment, acc)
+                  )
+                )
 
-            case q"package $ref { ..$topstats }" =>
-              val nextPath =
-                if (ref.name == termNames.EMPTY_PACKAGE_NAME) path
-                else TermName(ref.toString) :: path
-              traversal(
-                topstats.zipWithIndex.map { case (body, index) => (nextPath, index, body) } ::: rs,
-                acc
-              )
+              case moduleDef @ ModuleDef(_, _, impl) =>
+                val nextPath = moduleDef.name :: path
+                traversal(
+                  impl.body.zipWithIndex.map {
+                    case (body, index) => (nextPath, index, body)
+                  } ::: rs,
+                  acc
+                )
 
-            case imp: g.Import =>
-              traversal(
-                rs,
-                visitImport(path.reverse, imp, acc)
-              )
+              // TODO: is this needed?
+              case classDef @ ClassDef(_, _, Nil, impl) =>
+                val nextPath = classDef.name :: path
+                traversal(
+                  impl.body.zipWithIndex.map {
+                    case (body, index) => (nextPath, index, body)
+                  } ::: rs,
+                  acc
+                )
 
-            case _ =>
-              traversal(
-                rs,
-                acc
-              )
-          }
-      }
+              case q"package $ref { ..$topstats }" =>
+                val nextPath =
+                  if (ref.name == termNames.EMPTY_PACKAGE_NAME) path
+                  else TermName(ref.toString) :: path
+                traversal(
+                  topstats.zipWithIndex.map {
+                    case (body, index) => (nextPath, index, body)
+                  } ::: rs,
+                  acc
+                )
+
+              case imp: g.Import =>
+                traversal(
+                  rs,
+                  visitImport(path.reverse, imp, acc)
+                )
+
+              case _ =>
+                traversal(
+                  rs,
+                  acc
+                )
+            }
+        }
       // go
       traversal(trees0.map(kv => (kv._1, 0, kv._2)), acc0)
     }
@@ -245,7 +259,8 @@ object SourceTextExtraction {
 
 }
 
-/** Scala compiler global needed for extracting doc comments. This uses the
+/**
+ * Scala compiler global needed for extracting doc comments. This uses the
  * ScaladocSyntaxAnalyzer, which keeps DocDefs in the parsed AST.
  *
  * It would be ideal to do this as a compiler plugin. Unfortunately there
@@ -272,9 +287,10 @@ class DocExtractionGlobal(settings: Settings = DocExtractionGlobal.defaultSettin
 }
 
 object DocExtractionGlobal {
-  def defaultSettings = new Settings {
-    embeddedDefaults[DocExtractionGlobal.type]
-    // this flag is crucial for method body extraction
-    Yrangepos.value = true
-  }
+  def defaultSettings =
+    new Settings {
+      embeddedDefaults[DocExtractionGlobal.type]
+      // this flag is crucial for method body extraction
+      Yrangepos.value = true
+    }
 }

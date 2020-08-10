@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.6.5](https://github.com/scala-exercises/sbt-exercise/tree/v0.6.5) (2020-08-10)
+
+[Full Changelog](https://github.com/scala-exercises/sbt-exercise/compare/v0.6.4...v0.6.5)
+
+📈 **Dependency updates**
+
+- Bumps sbt up [\#17](https://github.com/scala-exercises/sbt-exercise/pull/17) ([juanpedromoreno](https://github.com/juanpedromoreno))
+
 ## [v0.6.4](https://github.com/scala-exercises/sbt-exercise/tree/v0.6.4) (2020-08-10)
 
 [Full Changelog](https://github.com/scala-exercises/sbt-exercise/compare/v0.6.3...v0.6.4)

@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.6.4](https://github.com/scala-exercises/sbt-exercise/tree/v0.6.4) (2020-08-10)
+
+[Full Changelog](https://github.com/scala-exercises/sbt-exercise/compare/v0.6.3...v0.6.4)
+
+**Merged pull requests:**
+
+- Upgrades project [\#26](https://github.com/scala-exercises/sbt-exercise/pull/26) ([juanpedromoreno](https://github.com/juanpedromoreno))
+
 ## [v0.6.3](https://github.com/scala-exercises/sbt-exercise/tree/v0.6.3) (2020-06-29)
 
 [Full Changelog](https://github.com/scala-exercises/sbt-exercise/compare/v0.6.2...v0.6.3)

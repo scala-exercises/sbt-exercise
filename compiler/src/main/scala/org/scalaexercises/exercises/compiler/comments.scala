@@ -30,7 +30,8 @@ object Comments {
   import CommentZed._
   import CommentParsing.ParseK
 
-  /** Type capturing the types for the name, description,
+  /**
+   * Type capturing the types for the name, description,
    * and explanation fields.
    */
   type Mode = {
@@ -46,17 +47,20 @@ object Comments {
       type Explanation[A] = E0[A]
     }
 
-    /** Library comments. Required name. Required description.
+    /**
+     * Library comments. Required name. Required description.
      * Require no explanation.
      */
     type Library = Aux[Id, Id, Empty]
 
-    /** Section comments. Require name. Optional description.
+    /**
+     * Section comments. Require name. Optional description.
      * Require no explanation.
      */
     type Section = Aux[Id, Option, Empty]
 
-    /** Exercise comments. Optional name. Optional description.
+    /**
+     * Exercise comments. Optional name. Optional description.
      * Optional explanation.
      */
     type Exercise = Aux[Option, Option, Option]
@@ -70,8 +74,8 @@ object Comments {
   }
 
   /** Helper function to parse and render a given comment. */
-  def parseAndRender[A <: Mode](comment: Comment)(
-      implicit evPKN: ParseK[A#Name],
+  def parseAndRender[A <: Mode](comment: Comment)(implicit
+      evPKN: ParseK[A#Name],
       evPKD: ParseK[A#Description],
       evPKE: ParseK[A#Explanation],
       evFD: Functor[A#Description],
@@ -116,13 +120,15 @@ private[compiler] object CommentFactory {
 /** Special types used for parsing and rendering. */
 private[compiler] object CommentZed {
 
-  /** Empty type for values that should raise an error
+  /**
+   * Empty type for values that should raise an error
    * if they are present.
    */
   sealed trait Empty[+A]
   object Empty extends SingletonFunctor[Empty] with Empty[Nothing]
 
-  /** Ignore type for values that we want to completely ignore during
+  /**
+   * Ignore type for values that we want to completely ignore during
    * parsing.
    */
   sealed trait Ignore[+A]
@@ -130,9 +136,10 @@ private[compiler] object CommentZed {
 
   /** Functor, for a singleton type. */
   sealed trait SingletonFunctor[F[+_]] { instance: F[Nothing] =>
-    implicit def singletonEq[A]: Eq[F[A]] = new Eq[F[A]] {
-      def eqv(a1: F[A], a2: F[A]): Boolean = a1 == a2 // always true?
-    }
+    implicit def singletonEq[A]: Eq[F[A]] =
+      new Eq[F[A]] {
+        def eqv(a1: F[A], a2: F[A]): Boolean = a1 == a2 // always true?
+      }
     implicit val singletonFunctor = new Functor[F] {
       def map[A, B](fa: F[A])(f: A => B) = instance
     }
@@ -146,7 +153,8 @@ private[compiler] object CommentParsing {
   /** Parse value container typeclass */
   trait ParseK[A[_]] {
 
-    /** Take a potential value and map it into the desired
+    /**
+     * Take a potential value and map it into the desired
      * type. If the value coming in is `Either.Left`, then the value
      * was not present during parsing. An incoming value of `Either.Right`
      * indicates that a value was parsed. An output of `Either.Left` indicates
@@ -160,14 +168,16 @@ private[compiler] object CommentParsing {
   object ParseK {
     def apply[A[_]](implicit instance: ParseK[A]): ParseK[A] = instance
 
-    /** A required value, which is always passed directly through.
+    /**
+     * A required value, which is always passed directly through.
      * A value that wasn't present during parsing will raise an error.
      */
     implicit val idParseK = new ParseK[Id] {
       override def fromEither[T](value: Either[String, T]) = value
     }
 
-    /** Parse an optional value. The result is always the right side `Either`
+    /**
+     * Parse an optional value. The result is always the right side `Either`
      * projection because the value is optional and shouldn't fail.
      */
     implicit val optionParseK = new ParseK[Option] {
@@ -175,7 +185,8 @@ private[compiler] object CommentParsing {
         Either.right(value.toOption)
     }
 
-    /** Parse a value that shouldn't exist. The input `Either` is swapped
+    /**
+     * Parse a value that shouldn't exist. The input `Either` is swapped
      * so that a parsed input value yields an error and a nonexistant
      * input value yields a success.
      */
@@ -187,7 +198,8 @@ private[compiler] object CommentParsing {
         )
     }
 
-    /** Parse a value that we're indifferent about. The result is
+    /**
+     * Parse a value that we're indifferent about. The result is
      * always success with a placeholder value.
      */
     implicit val ignoreParseK = new ParseK[Ignore] {
@@ -196,7 +208,8 @@ private[compiler] object CommentParsing {
     }
   }
 
-  /** A parsed comment with the values stored in the appropriate types
+  /**
+   * A parsed comment with the values stored in the appropriate types
    */
   case class ParsedComment[N[_], D[_], E[_]](
       name: N[String],
@@ -208,8 +221,8 @@ private[compiler] object CommentParsing {
     type Aux[A <: Mode] = ParsedComment[A#Name, A#Description, A#Explanation]
   }
 
-  def parse[A <: Mode](comment: Comment)(
-      implicit evN: ParseK[A#Name],
+  def parse[A <: Mode](comment: Comment)(implicit
+      evN: ParseK[A#Name],
       evD: ParseK[A#Description],
       evE: ParseK[A#Explanation]
   ): String Either ParsedComment[A#Name, A#Description, A#Explanation] = parse0(comment)
@@ -258,7 +271,8 @@ private[compiler] object CommentRendering {
   import Comments.Mode
   import CommentParsing.ParsedComment
 
-  /** A rendered comment. This leverages the same types
+  /**
+   * A rendered comment. This leverages the same types
    * used during parsing.
    */
   case class RenderedComment[N[_], D[_], E[_]](
@@ -283,23 +297,24 @@ private[compiler] object CommentRendering {
   def renderBody(body: Body): String =
     Xhtml.toXhtml(body.blocks flatMap renderBlock)
 
-  private[this] def renderBlock(block: Block): NodeSeq = block match {
-    case Title(in, 1)  => <h3>{renderInline(in)}</h3>
-    case Title(in, 2)  => <h4>{renderInline(in)}</h4>
-    case Title(in, 3)  => <h5>{renderInline(in)}</h5>
-    case Title(in, _)  => <h6>{renderInline(in)}</h6>
-    case Paragraph(in) => <p>{renderInline(in)}</p>
-    case Code(data) =>
-      <pre class={"scala"}><code class={"scala"}>{formatCode(data)}</code></pre>
-    case UnorderedList(items) =>
-      <ul>{renderListItems(items.toSeq)}</ul>
-    case OrderedList(items, listStyle) =>
-      <ol class={listStyle}>{renderListItems(items.toSeq)}</ol>
-    case DefinitionList(items) =>
-      <dl>{items map { case (t, d) => <dt>{renderInline(t)}</dt><dd>{renderBlock(d)}</dd> }}</dl>
-    case HorizontalRule() =>
-      <hr/>
-  }
+  private[this] def renderBlock(block: Block): NodeSeq =
+    block match {
+      case Title(in, 1)  => <h3>{renderInline(in)}</h3>
+      case Title(in, 2)  => <h4>{renderInline(in)}</h4>
+      case Title(in, 3)  => <h5>{renderInline(in)}</h5>
+      case Title(in, _)  => <h6>{renderInline(in)}</h6>
+      case Paragraph(in) => <p>{renderInline(in)}</p>
+      case Code(data) =>
+        <pre class={"scala"}><code class={"scala"}>{formatCode(data)}</code></pre>
+      case UnorderedList(items) =>
+        <ul>{renderListItems(items.toSeq)}</ul>
+      case OrderedList(items, listStyle) =>
+        <ol class={listStyle}>{renderListItems(items.toSeq)}</ol>
+      case DefinitionList(items) =>
+        <dl>{items map { case (t, d) => <dt>{renderInline(t)}</dt><dd>{renderBlock(d)}</dd> }}</dl>
+      case HorizontalRule() =>
+        <hr/>
+    }
 
   private[this] def renderListItems(items: Seq[Block]) =
     items.foldLeft(xml.NodeSeq.Empty) { (xmlList, item) =>
@@ -314,20 +329,21 @@ private[compiler] object CommentRendering {
       }
     }
 
-  private[this] def renderInline(inl: Inline): NodeSeq = inl match {
-    case Chain(items)          => items flatMap renderInline
-    case Italic(in)            => <i>{renderInline(in)}</i>
-    case Bold(in)              => <b>{renderInline(in)}</b>
-    case Underline(in)         => <u>{renderInline(in)}</u>
-    case Superscript(in)       => <sup>{renderInline(in)}</sup>
-    case Subscript(in)         => <sub>{renderInline(in)}</sub>
-    case Link(raw, title)      => <a href={raw} target="_blank">{renderInline(title)}</a>
-    case Monospace(in)         => <code>{renderInline(in)}</code>
-    case Text(text)            => scala.xml.Text(text)
-    case Summary(in)           => renderInline(in)
-    case HtmlTag(tag)          => scala.xml.Unparsed(tag)
-    case EntityLink(target, _) => renderLink(target)
-  }
+  private[this] def renderInline(inl: Inline): NodeSeq =
+    inl match {
+      case Chain(items)          => items flatMap renderInline
+      case Italic(in)            => <i>{renderInline(in)}</i>
+      case Bold(in)              => <b>{renderInline(in)}</b>
+      case Underline(in)         => <u>{renderInline(in)}</u>
+      case Superscript(in)       => <sup>{renderInline(in)}</sup>
+      case Subscript(in)         => <sub>{renderInline(in)}</sub>
+      case Link(raw, title)      => <a href={raw} target="_blank">{renderInline(title)}</a>
+      case Monospace(in)         => <code>{renderInline(in)}</code>
+      case Text(text)            => scala.xml.Text(text)
+      case Summary(in)           => renderInline(in)
+      case HtmlTag(tag)          => scala.xml.Unparsed(tag)
+      case EntityLink(target, _) => renderLink(target)
+    }
 
   private[this] def renderLink(text: Inline) = renderInline(text)
 

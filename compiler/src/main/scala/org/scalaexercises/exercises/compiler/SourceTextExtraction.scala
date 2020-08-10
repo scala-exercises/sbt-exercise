@@ -16,13 +16,15 @@
 
 package org.scalaexercises.compiler
 
-import scala.annotation.tailrec
+import java.io.File
 
+import org.scalaexercises.exercises.compiler.CompilerSettings
+
+import scala.annotation.tailrec
 import scala.collection.compat._
 import scala.reflect.internal.util.BatchSourceFile
 import scala.tools.nsc._
 import scala.tools.nsc.doc.{Settings => _, _}
-
 import scala.tools.nsc.doc.base.comment.Comment
 
 class SourceTextExtraction {
@@ -287,10 +289,15 @@ class DocExtractionGlobal(settings: Settings = DocExtractionGlobal.defaultSettin
 }
 
 object DocExtractionGlobal {
+
   def defaultSettings =
     new Settings {
       embeddedDefaults[DocExtractionGlobal.type]
       // this flag is crucial for method body extraction
       Yrangepos.value = true
+      usejavacp.value = true
+
+      bootclasspath.value = CompilerSettings.paths.mkString(File.pathSeparator)
+      classpath.value = CompilerSettings.paths.mkString(File.pathSeparator)
     }
 }

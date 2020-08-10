@@ -16,7 +16,11 @@
 
 package org.scalaexercises.compiler
 
+import java.io.File
+import java.net.URLClassLoader
+
 import org.scalaexercises.definitions.{BuildInfo, Library}
+import org.scalaexercises.exercises.compiler.CompilerSettings
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -148,8 +152,28 @@ class CompilerSpec extends AnyFunSpec with Matchers {
   }
 
   object globalUtil {
+
+    def getClassPath(cl: ClassLoader, acc: List[List[String]] = List.empty): List[List[String]] = {
+      val cp = cl match {
+        case urlClassLoader: URLClassLoader =>
+          urlClassLoader.getURLs
+            .filter(_.getProtocol == "file")
+            .map(u => new File(u.toURI).getPath)
+            .toList
+        case _ => Nil
+      }
+      cl.getParent match {
+        case null   => (cp :: acc).reverse
+        case parent => getClassPath(parent, cp :: acc)
+      }
+    }
+
+    val currentClassPath: List[String] = getClassPath(this.getClass.getClassLoader).head
     val global = new Global(new Settings {
       embeddedDefaults[CompilerSpec]
+
+      bootclasspath.value = CompilerSettings.paths.mkString(File.pathSeparator)
+      classpath.value = (CompilerSettings.paths ::: currentClassPath).mkString(File.pathSeparator)
     })
     val outputTarget = new VirtualDirectory("(memory)", None)
     global.settings.outputDirs.setSingleOutput(outputTarget)

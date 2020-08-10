@@ -1,8 +1,6 @@
 ThisBuild / organization := "org.scala-exercises"
 ThisBuild / githubOrganization := "47degrees"
 ThisBuild / scalaVersion := V.scala212
-ThisBuild / useCoursier := false
-ThisBuild / fork := true
 
 publish / skip := true
 

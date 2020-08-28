@@ -46,15 +46,15 @@ lazy val compiler = (project in file("compiler"))
     scalacOptions -= "-Xfatal-warnings",
     libraryDependencies ++= Seq(
       "org.scala-exercises"    %% "runtime"                 % V.runtime,
-      "org.scala-lang"          % "scala-compiler"          % scalaVersion.value,
-      "org.scala-lang.modules" %% "scala-collection-compat" % V.collectioncompat,
-      "org.typelevel"          %% "cats-core"               % V.cats      % Compile,
+      "org.scala-lang"          % "scala-compiler"          % scalaVersion.value % Provided,
+      "org.scala-lang.modules" %% "scala-collection-compat" % V.collectioncompat % Provided,
+      "org.typelevel"          %% "cats-core"               % V.cats             % Compile,
       "org.http4s"             %% "http4s-blaze-client"     % V.http4s,
       "org.http4s"             %% "http4s-circe"            % V.http4s,
       "com.47deg"              %% "github4s"                % V.github4s,
       "org.scalariform"        %% "scalariform"             % V.scalariform,
-      "org.typelevel"          %% "cats-laws"               % V.cats      % Test,
-      "org.scalatest"          %% "scalatest"               % V.scalatest % Test
+      "org.typelevel"          %% "cats-laws"               % V.cats             % Test,
+      "org.scalatest"          %% "scalatest"               % V.scalatest        % Test
     )
   )
   .dependsOn(definitions)

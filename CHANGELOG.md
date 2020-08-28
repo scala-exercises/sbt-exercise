@@ -1,5 +1,19 @@
 # Changelog
 
+## [v0.6.6](https://github.com/scala-exercises/sbt-exercise/tree/v0.6.6) (2020-08-28)
+
+[Full Changelog](https://github.com/scala-exercises/sbt-exercise/compare/v0.6.5...v0.6.6)
+
+📈 **Dependency updates**
+
+- Update scalatest to 3.2.2 [\#29](https://github.com/scala-exercises/sbt-exercise/pull/29) ([47erbot](https://github.com/47erbot))
+- Update sbt-mdoc to 2.2.5 [\#28](https://github.com/scala-exercises/sbt-exercise/pull/28) ([47erbot](https://github.com/47erbot))
+- Update scalafmt-core to 2.6.4 [\#27](https://github.com/scala-exercises/sbt-exercise/pull/27) ([47erbot](https://github.com/47erbot))
+
+**Merged pull requests:**
+
+- Limits the Scala dependencies scope as provided [\#30](https://github.com/scala-exercises/sbt-exercise/pull/30) ([juanpedromoreno](https://github.com/juanpedromoreno))
+
 ## [v0.6.5](https://github.com/scala-exercises/sbt-exercise/tree/v0.6.5) (2020-08-10)
 
 [Full Changelog](https://github.com/scala-exercises/sbt-exercise/compare/v0.6.4...v0.6.5)

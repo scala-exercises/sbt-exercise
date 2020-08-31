@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.6.7](https://github.com/scala-exercises/sbt-exercise/tree/v0.6.7) (2020-08-31)
+
+[Full Changelog](https://github.com/scala-exercises/sbt-exercise/compare/v0.6.6...v0.6.7)
+
+**Merged pull requests:**
+
+- Excludes collection-compat [\#31](https://github.com/scala-exercises/sbt-exercise/pull/31) ([juanpedromoreno](https://github.com/juanpedromoreno))
+
 ## [v0.6.6](https://github.com/scala-exercises/sbt-exercise/tree/v0.6.6) (2020-08-28)
 
 [Full Changelog](https://github.com/scala-exercises/sbt-exercise/compare/v0.6.5...v0.6.6)

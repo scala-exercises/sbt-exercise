@@ -148,6 +148,22 @@ class SourceTextExtractionSpec extends AnyFunSpec with Matchers with Inside {
 
   }
 
+  describe("relative path resolution") {
+    val extraction = new SourceTextExtraction()
+    it ("should split a unix like path") {
+      val absolutePath = "/home/a-user/workspace/sbt-exercise"
+      val base = "/home/a-user/workspace"
+      val relativePath = extraction.relativePath(absolutePath, base)
+      relativePath shouldEqual "/sbt-exercise"
+    }
+    it ("should split a windows like path") {
+      val absolutePath = "C:\\Users\\a-user\\workspace\\sbt-exercise"
+      val base = "C:\\Users\\a-user\\workspace"
+      val relativePath = extraction.relativePath(absolutePath, base)
+      relativePath shouldEqual "\\sbt-exercise"
+    }
+  }
+
   def renderImportSelector(sel: Global#ImportSelector): String =
     (sel.name, sel.rename) match {
       case (a, b) if a == b => a.toString

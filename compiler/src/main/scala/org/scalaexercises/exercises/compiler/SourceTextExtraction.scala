@@ -17,6 +17,7 @@
 package org.scalaexercises.compiler
 
 import java.io.File
+import java.util.regex.Pattern
 
 import org.scalaexercises.exercises.compiler.CompilerSettings
 
@@ -58,7 +59,7 @@ class SourceTextExtraction {
   )
 
   def relativePath(absolutePath: String, base: String) =
-    absolutePath.split(base).lift(1).getOrElse("")
+    absolutePath.split(Pattern.quote(base)).lift(1).getOrElse("")
 
   def extractAll(sources: List[String], paths: List[String], baseDir: String): Extracted = {
     new global.Run() compileSources (paths zip sources).map({

@@ -84,9 +84,8 @@ class SourceTextExtractionSpec extends AnyFunSpec with Matchers with Inside {
     it("should find all doc comments on classes and objects") {
       val comments = res.comments
       comments shouldNot be(empty)
-      comments foreach {
-        case (k, _) =>
-          multiLevelPackage.split('.') foreach (k should contain(_))
+      comments foreach { case (k, _) =>
+        multiLevelPackage.split('.') foreach (k should contain(_))
       }
       comments map { case (k, v) => k.mkString(".") -> v.raw } should equal(
         Map(
@@ -133,15 +132,13 @@ class SourceTextExtractionSpec extends AnyFunSpec with Matchers with Inside {
       val res   = new SourceTextExtraction().extractAll(source1 :: source2 :: Nil, paths, "/")
 
       // Should capture exactly 1 import for Object1.method
-      inside(res.methods.get("Object1" :: "method" :: Nil)) {
-        case Some(method) =>
-          method.imports shouldEqual List("import a._", "import b._")
+      inside(res.methods.get("Object1" :: "method" :: Nil)) { case Some(method) =>
+        method.imports shouldEqual List("import a._", "import b._")
       }
 
       // Should capture exactly 2 imports for Object2.method
-      inside(res.methods.get("Object2" :: "method" :: Nil)) {
-        case Some(method) =>
-          method.imports shouldEqual List("import c._", "import d._", "import obj2._")
+      inside(res.methods.get("Object2" :: "method" :: Nil)) { case Some(method) =>
+        method.imports shouldEqual List("import c._", "import d._", "import obj2._")
       }
 
     }

@@ -74,8 +74,8 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     buildInfoPackage := "org.scalaexercises.plugin.sbtexercise",
     buildInfoKeys := Seq(
       version,
-      BuildInfoKey.map(compilerClasspath) {
-        case (_, classFiles) ⇒ ("compilerClasspath", classFiles.map(_.data))
+      BuildInfoKey.map(compilerClasspath) { case (_, classFiles) ⇒
+        ("compilerClasspath", classFiles.map(_.data))
       }
     )
   )

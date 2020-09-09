@@ -267,12 +267,11 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       val generated = generateExercises.value
 
       val dir = (sourceManaged in Compile).value
-      generated.map {
-        case (n, code) =>
-          val file = dir / (n.replace(".", "/") + ".scala")
-          IO.write(file, code)
-          log.info(s"Generated library at $file")
-          file
+      generated.map { case (n, code) =>
+        val file = dir / (n.replace(".", "/") + ".scala")
+        IO.write(file, code)
+        log.info(s"Generated library at $file")
+        file
       }
     }
 

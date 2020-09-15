@@ -48,17 +48,16 @@ class CommentRenderingRegressions extends AnyFunSpec with Matchers with Inside {
           * }}}
           */""")
 
-      inside(Comments.parseAndRender[Mode.Exercise](comment)) {
-        case Right(parsed) =>
-          // remove XML and check that there is code content
-          val description = parsed.description
-            .map(_.replaceAll("\\<.*?\\>", ""))
-            .getOrElse("")
+      inside(Comments.parseAndRender[Mode.Exercise](comment)) { case Right(parsed) =>
+        // remove XML and check that there is code content
+        val description = parsed.description
+          .map(_.replaceAll("\\<.*?\\>", ""))
+          .getOrElse("")
 
-          assert(
-            description.trim.length > 50,
-            "Issue #309: code segment was not properly rendered"
-          )
+        assert(
+          description.trim.length > 50,
+          "Issue #309: code segment was not properly rendered"
+        )
       }
 
     }
@@ -74,20 +73,19 @@ class CommentRenderingRegressions extends AnyFunSpec with Matchers with Inside {
          * }}}
          */""")
 
-      inside(Comments.parseAndRender[Mode.Exercise](comment)) {
-        case Right(parsed) =>
-          val description = parsed.description
-            .map(_.replaceAll("\\<.*?\\>", ""))
-            .getOrElse("")
+      inside(Comments.parseAndRender[Mode.Exercise](comment)) { case Right(parsed) =>
+        val description = parsed.description
+          .map(_.replaceAll("\\<.*?\\>", ""))
+          .getOrElse("")
 
-          assert(
-            description.trim ==
-              """abstract class Soldier(val firstName: String, val lastName: String) {}
+        assert(
+          description.trim ==
+            """abstract class Soldier(val firstName: String, val lastName: String) {}
                 |
                 |// if you uncomment this line, it will fail compilation
                 |//val soldier = new Soldier""".stripMargin,
-            "Issue scala-exercises/exercises-stdlib#50: comment rendering problem"
-          )
+          "Issue scala-exercises/exercises-stdlib#50: comment rendering problem"
+        )
       }
     }
   }

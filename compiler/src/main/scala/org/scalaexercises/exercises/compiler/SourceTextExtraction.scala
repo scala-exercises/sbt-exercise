@@ -62,12 +62,12 @@ class SourceTextExtraction {
     absolutePath.split(Pattern.quote(base)).lift(1).getOrElse("")
 
   def extractAll(sources: List[String], paths: List[String], baseDir: String): Extracted = {
-    new global.Run() compileSources (paths zip sources).map({
-      case (path, code) => new BatchSourceFile(path, code)
+    new global.Run() compileSources (paths zip sources).map({ case (path, code) =>
+      new BatchSourceFile(path, code)
     })
     val run = global.currentRun
-    val symbolPaths = Map(run.symSource.toList: _*).map({
-      case (symbol, file) => (symbol.toString, relativePath(file.path, baseDir))
+    val symbolPaths = Map(run.symSource.toList: _*).map({ case (symbol, file) =>
+      (symbol.toString, relativePath(file.path, baseDir))
     })
     val compilationUnits = run.units.toList // `units` is only only iterable once!
     val extractions      = compilationUnits.map(_.body).map(boundExtractRaw)
@@ -85,9 +85,8 @@ class SourceTextExtraction {
       p flatMap (_.split('.').toList)
 
     val (commentss, methodss) = extractions.map { extraction =>
-      val comments = extraction.comments.map(expandPath).map {
-        case (k, v) =>
-          splitPackage(k) -> new ExtractedComment(v._2.raw, commentFactory.parse(v._2))
+      val comments = extraction.comments.map(expandPath).map { case (k, v) =>
+        splitPackage(k) -> new ExtractedComment(v._2.raw, commentFactory.parse(v._2))
       }
 
       val rawImports = extraction.imports
@@ -95,17 +94,16 @@ class SourceTextExtraction {
 
       val imports = paths.groupBy(_._1).view.mapValues(_.map(_._2)).toMap
 
-      val methods = extraction.methods.map(expandPath).map {
-        case (k, v) =>
-          lazy val methodImports = k
-            .scanLeft(Nil: List[String])((a, c) => c :: a)
-            .map(_.reverse)
-            .flatMap(imports.get)
-            .flatten
-            .collect {
-              case (order, imp) if order < v._1 => showCode(imp)
-            }
-          splitPackage(k) -> new ExtractedMethod(boundReadCode(v._2), methodImports)
+      val methods = extraction.methods.map(expandPath).map { case (k, v) =>
+        lazy val methodImports = k
+          .scanLeft(Nil: List[String])((a, c) => c :: a)
+          .map(_.reverse)
+          .flatMap(imports.get)
+          .flatten
+          .collect {
+            case (order, imp) if order < v._1 => showCode(imp)
+          }
+        splitPackage(k) -> new ExtractedMethod(boundReadCode(v._2), methodImports)
       }
       (comments, methods)
     }.unzip
@@ -160,8 +158,8 @@ object SourceTextExtraction {
               case DocDef(comment, moduleDef @ ModuleDef(_, _, impl)) =>
                 val nextPath = moduleDef.name :: path
                 traversal(
-                  impl.body.zipWithIndex.map {
-                    case (body, index) => (nextPath, index, body)
+                  impl.body.zipWithIndex.map { case (body, index) =>
+                    (nextPath, index, body)
                   } ::: rs,
                   visitDocComment(nextPath.reverse, comment, acc)
                 )
@@ -170,8 +168,8 @@ object SourceTextExtraction {
               case DocDef(comment, classDef @ ClassDef(_, _, Nil, impl)) =>
                 val nextPath = classDef.name :: path
                 traversal(
-                  impl.body.zipWithIndex.map {
-                    case (body, index) => (nextPath, index, body)
+                  impl.body.zipWithIndex.map { case (body, index) =>
+                    (nextPath, index, body)
                   } ::: rs,
                   visitDocComment(nextPath.reverse, comment, acc)
                 )
@@ -191,8 +189,8 @@ object SourceTextExtraction {
               case moduleDef @ ModuleDef(_, _, impl) =>
                 val nextPath = moduleDef.name :: path
                 traversal(
-                  impl.body.zipWithIndex.map {
-                    case (body, index) => (nextPath, index, body)
+                  impl.body.zipWithIndex.map { case (body, index) =>
+                    (nextPath, index, body)
                   } ::: rs,
                   acc
                 )
@@ -201,8 +199,8 @@ object SourceTextExtraction {
               case classDef @ ClassDef(_, _, Nil, impl) =>
                 val nextPath = classDef.name :: path
                 traversal(
-                  impl.body.zipWithIndex.map {
-                    case (body, index) => (nextPath, index, body)
+                  impl.body.zipWithIndex.map { case (body, index) =>
+                    (nextPath, index, body)
                   } ::: rs,
                   acc
                 )
@@ -212,8 +210,8 @@ object SourceTextExtraction {
                   if (ref.name == termNames.EMPTY_PACKAGE_NAME) path
                   else TermName(ref.toString) :: path
                 traversal(
-                  topstats.zipWithIndex.map {
-                    case (body, index) => (nextPath, index, body)
+                  topstats.zipWithIndex.map { case (body, index) =>
+                    (nextPath, index, body)
                   } ::: rs,
                   acc
                 )

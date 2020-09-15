@@ -12,8 +12,8 @@ addCommandAlias("ci-docs", ";github; mdoc; headerCreateAll")
 addCommandAlias("ci-publish", ";github; ci-release")
 
 lazy val V = new {
-  val cats: String                = "2.1.1"
-  val collectioncompat: String    = "2.1.6"
+  val cats: String                = "2.2.0"
+  val collectioncompat: String    = "2.2.0"
   val github4s: String            = "0.25.0"
   val http4s: String              = "0.21.7"
   val runtime: String             = "0.6.4"
@@ -74,8 +74,8 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     buildInfoPackage := "org.scalaexercises.plugin.sbtexercise",
     buildInfoKeys := Seq(
       version,
-      BuildInfoKey.map(compilerClasspath) {
-        case (_, classFiles) ⇒ ("compilerClasspath", classFiles.map(_.data))
+      BuildInfoKey.map(compilerClasspath) { case (_, classFiles) ⇒
+        ("compilerClasspath", classFiles.map(_.data))
       }
     )
   )

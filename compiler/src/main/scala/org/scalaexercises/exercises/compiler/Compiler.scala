@@ -128,8 +128,8 @@ case class Compiler() {
         symbol <- internal.instanceToClassSymbol(library)
         symbolPath = internal.symbolToPath(symbol)
         comment <- (internal
-            .resolveComment(symbolPath)
-            .flatMap(Comments.parseAndRender[Mode.Library]))
+          .resolveComment(symbolPath)
+          .flatMap(Comments.parseAndRender[Mode.Library]))
           .leftMap(enhanceDocError(symbolPath))
         sections <- checkEmptySectionList(symbol, library).flatMap {
           _.sections

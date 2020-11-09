@@ -23,7 +23,7 @@ lazy val V = new {
   val scalacheckShapeless: String = "1.2.5"
   val scalamacros: String         = "2.1.1"
   val scalariform: String         = "0.2.10"
-  val scalatest: String           = "3.2.2"
+  val scalatest: String           = "3.2.3"
 }
 
 lazy val definitions = (project in file("definitions"))

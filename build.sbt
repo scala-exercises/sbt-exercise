@@ -12,7 +12,7 @@ addCommandAlias("ci-docs", ";github; mdoc; headerCreateAll")
 addCommandAlias("ci-publish", ";github; ci-release")
 
 lazy val V = new {
-  val cats: String                = "2.4.0"
+  val cats: String                = "2.4.1"
   val collectioncompat: String    = "2.4.1"
   val github4s: String            = "0.28.1"
   val http4s: String              = "0.21.18"

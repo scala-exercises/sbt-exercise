@@ -1,6 +1,6 @@
-ThisBuild / organization := "org.scala-exercises"
+ThisBuild / organization       := "org.scala-exercises"
 ThisBuild / githubOrganization := "47degrees"
-ThisBuild / scalaVersion := V.scala212
+ThisBuild / scalaVersion       := V.scala212
 
 publish / skip := true
 
@@ -41,11 +41,11 @@ lazy val definitions = (project in file("definitions"))
 lazy val compiler = (project in file("compiler"))
   .settings(name := "exercise-compiler")
   .settings(
-    exportJars := true,
+    exportJars         := true,
     crossScalaVersions := Seq(V.scala212, V.scala),
     scalacOptions -= "-Xfatal-warnings",
     libraryDependencies ++= Seq(
-      "org.scala-exercises"    %% "runtime"                 % V.runtime exclude ("org.scala-lang.modules", "scala-collection-compat"),
+      "org.scala-exercises" %% "runtime" % V.runtime exclude ("org.scala-lang.modules", "scala-collection-compat"),
       "org.scala-lang"          % "scala-compiler"          % scalaVersion.value,
       "org.scala-lang.modules" %% "scala-collection-compat" % V.collectioncompat,
       "org.typelevel"          %% "cats-core"               % V.cats      % Compile,
@@ -70,8 +70,8 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     addCompilerPlugin("org.scalamacros" % "paradise" % V.scalamacros cross CrossVersion.full),
     // Leverage build info to populate compiler classpath--
     compilerClasspath := { fullClasspath in (compiler, Compile) }.value,
-    buildInfoObject := "Meta",
-    buildInfoPackage := "org.scalaexercises.plugin.sbtexercise",
+    buildInfoObject   := "Meta",
+    buildInfoPackage  := "org.scalaexercises.plugin.sbtexercise",
     buildInfoKeys := Seq(
       version,
       BuildInfoKey.map(compilerClasspath) { case (_, classFiles) ⇒

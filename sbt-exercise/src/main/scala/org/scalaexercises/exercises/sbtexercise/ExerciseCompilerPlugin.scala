@@ -100,15 +100,14 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     Seq(
       // v0.13.9/main/src/main/scala/sbt/Defaults.scala
       sourceDirectory := reconfigureSub(sourceDirectory).value,
-      sourceManaged := reconfigureSub(sourceManaged).value,
+      sourceManaged   := reconfigureSub(sourceManaged).value,
       resourceManaged := reconfigureSub(resourceManaged).value
     )
 
   /**
-   * Helper to facilitate changing the directories. By default, a configuration
-   * inheriting from Compile will compile source in
-   * `src/<configuration_name>/[scala|test|...]`. This forces the directory
-   * back to `src/main/[scala|test|...]`.
+   * Helper to facilitate changing the directories. By default, a configuration inheriting from
+   * Compile will compile source in `src/<configuration_name>/[scala|test|...]`. This forces the
+   * directory back to `src/main/[scala|test|...]`.
    */
   private def reconfigureSub(key: SettingKey[File]): Def.Initialize[File] =
     Def.setting((ThisScope.copy(config = Global.config) / key).value / "main")
@@ -123,8 +122,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     Either.catchNonFatal(f).leftMap(e => Ior.both(msg, e))
 
   /**
-   * Given an Analysis output from a compile run, this will
-   * identify all modules implementing `exercise.Library`.
+   * Given an Analysis output from a compile run, this will identify all modules implementing
+   * `exercise.Library`.
    */
   private def discoverLibraries(analysis: CompileAnalysis): Seq[String] =
     Discovery(Set("org.scalaexercises.definitions.Library"), Set.empty)(Tests.allDefs(analysis))
@@ -292,7 +291,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   /**
    * Output stream that captures an output on a line by line basis.
    *
-   * @param f the function to invoke with each line
+   * @param f
+   *   the function to invoke with each line
    */
   private[this] class LineByLineOutputStream(
       f: (String) => Unit

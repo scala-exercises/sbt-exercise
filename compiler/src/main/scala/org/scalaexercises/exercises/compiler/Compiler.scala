@@ -374,7 +374,7 @@ case class Compiler() {
 
     private lazy val EMPTY_PACKAGE_NAME_STRING = unapplyRawName(termNames.EMPTY_PACKAGE_NAME)
     private lazy val ROOTPKG_STRING            = unapplyRawName(termNames.ROOTPKG)
-    private lazy val ROOT                      = "<root>" // can't find an accessible constant for this
+    private lazy val ROOT = "<root>" // can't find an accessible constant for this
 
   }
 

@@ -31,8 +31,7 @@ object Comments {
   import CommentParsing.ParseK
 
   /**
-   * Type capturing the types for the name, description,
-   * and explanation fields.
+   * Type capturing the types for the name, description, and explanation fields.
    */
   type Mode = {
     type Name[A]
@@ -48,20 +47,17 @@ object Comments {
     }
 
     /**
-     * Library comments. Required name. Required description.
-     * Require no explanation.
+     * Library comments. Required name. Required description. Require no explanation.
      */
     type Library = Aux[Id, Id, Empty]
 
     /**
-     * Section comments. Require name. Optional description.
-     * Require no explanation.
+     * Section comments. Require name. Optional description. Require no explanation.
      */
     type Section = Aux[Id, Option, Empty]
 
     /**
-     * Exercise comments. Optional name. Optional description.
-     * Optional explanation.
+     * Exercise comments. Optional name. Optional description. Optional explanation.
      */
     type Exercise = Aux[Option, Option, Option]
 
@@ -106,10 +102,10 @@ private[compiler] object CommentFactory {
         try parseAtSymbol(comment.raw, comment.raw, comment.pos)
         finally settings.nowarn.value = nowarnings
       }
-      override def parse(comment: String)                                                 = parse(DocComment(comment))
-      override def internalLink(sym: Symbol, site: Symbol): Option[LinkTo]                = None
-      override def chooseLink(links: List[LinkTo]): LinkTo                                = links.headOption.orNull
-      override def toString(link: LinkTo): String                                         = "No link"
+      override def parse(comment: String) = parse(DocComment(comment))
+      override def internalLink(sym: Symbol, site: Symbol): Option[LinkTo] = None
+      override def chooseLink(links: List[LinkTo]): LinkTo                 = links.headOption.orNull
+      override def toString(link: LinkTo): String                          = "No link"
       override def findExternalLink(sym: Symbol, name: String): Option[LinkToExternalTpl] = None
       override def warnNoLink: Boolean                                                    = false
     }
@@ -121,15 +117,13 @@ private[compiler] object CommentFactory {
 private[compiler] object CommentZed {
 
   /**
-   * Empty type for values that should raise an error
-   * if they are present.
+   * Empty type for values that should raise an error if they are present.
    */
   sealed trait Empty[+A]
   object Empty extends SingletonFunctor[Empty] with Empty[Nothing]
 
   /**
-   * Ignore type for values that we want to completely ignore during
-   * parsing.
+   * Ignore type for values that we want to completely ignore during parsing.
    */
   sealed trait Ignore[+A]
   object Ignore extends SingletonFunctor[Ignore] with Ignore[Nothing]
@@ -154,13 +148,11 @@ private[compiler] object CommentParsing {
   trait ParseK[A[_]] {
 
     /**
-     * Take a potential value and map it into the desired
-     * type. If the value coming in is `Either.Left`, then the value
-     * was not present during parsing. An incoming value of `Either.Right`
-     * indicates that a value was parsed. An output of `Either.Left` indicates
-     * that an error should be raised. And an output value of `Either.Right`
-     * indicates that the value was parsed and mapped into the appropriate
-     * type.
+     * Take a potential value and map it into the desired type. If the value coming in is
+     * `Either.Left`, then the value was not present during parsing. An incoming value of
+     * `Either.Right` indicates that a value was parsed. An output of `Either.Left` indicates that
+     * an error should be raised. And an output value of `Either.Right` indicates that the value was
+     * parsed and mapped into the appropriate type.
      */
     def fromEither[T](value: Either[String, T]): Either[String, A[T]]
   }
@@ -169,16 +161,16 @@ private[compiler] object CommentParsing {
     def apply[A[_]](implicit instance: ParseK[A]): ParseK[A] = instance
 
     /**
-     * A required value, which is always passed directly through.
-     * A value that wasn't present during parsing will raise an error.
+     * A required value, which is always passed directly through. A value that wasn't present during
+     * parsing will raise an error.
      */
     implicit val idParseK = new ParseK[Id] {
       override def fromEither[T](value: Either[String, T]) = value
     }
 
     /**
-     * Parse an optional value. The result is always the right side `Either`
-     * projection because the value is optional and shouldn't fail.
+     * Parse an optional value. The result is always the right side `Either` projection because the
+     * value is optional and shouldn't fail.
      */
     implicit val optionParseK = new ParseK[Option] {
       override def fromEither[T](value: Either[String, T]) =
@@ -186,9 +178,8 @@ private[compiler] object CommentParsing {
     }
 
     /**
-     * Parse a value that shouldn't exist. The input `Either` is swapped
-     * so that a parsed input value yields an error and a nonexistant
-     * input value yields a success.
+     * Parse a value that shouldn't exist. The input `Either` is swapped so that a parsed input
+     * value yields an error and a nonexistant input value yields a success.
      */
     implicit val emptyParseK = new ParseK[Empty] {
       override def fromEither[T](value: Either[String, T]) =
@@ -199,8 +190,8 @@ private[compiler] object CommentParsing {
     }
 
     /**
-     * Parse a value that we're indifferent about. The result is
-     * always success with a placeholder value.
+     * Parse a value that we're indifferent about. The result is always success with a placeholder
+     * value.
      */
     implicit val ignoreParseK = new ParseK[Ignore] {
       override def fromEither[T](either: Either[String, T]) =
@@ -272,8 +263,7 @@ private[compiler] object CommentRendering {
   import CommentParsing.ParsedComment
 
   /**
-   * A rendered comment. This leverages the same types
-   * used during parsing.
+   * A rendered comment. This leverages the same types used during parsing.
    */
   case class RenderedComment[N[_], D[_], E[_]](
       name: N[String],

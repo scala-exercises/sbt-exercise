@@ -118,8 +118,7 @@ class SourceTextExtraction {
 }
 
 /**
- * Utility to find doc exercise-worthy comments and source code blobs
- * in a tree.
+ * Utility to find doc exercise-worthy comments and source code blobs in a tree.
  */
 object SourceTextExtraction {
 
@@ -135,8 +134,7 @@ object SourceTextExtraction {
     import g._
 
     /**
-     * Define generic accumulating traversal that visits all the nodes of
-     * interest.
+     * Define generic accumulating traversal that visits all the nodes of interest.
      */
     def traverse[A](
         trees0: List[(Path[g.type], Tree)],
@@ -260,12 +258,11 @@ object SourceTextExtraction {
 }
 
 /**
- * Scala compiler global needed for extracting doc comments. This uses the
- * ScaladocSyntaxAnalyzer, which keeps DocDefs in the parsed AST.
+ * Scala compiler global needed for extracting doc comments. This uses the ScaladocSyntaxAnalyzer,
+ * which keeps DocDefs in the parsed AST.
  *
- * It would be ideal to do this as a compiler plugin. Unfortunately there
- * doesn't seem to be a way to replace the syntax analyzer phase (named
- * "parser") with a plugin.
+ * It would be ideal to do this as a compiler plugin. Unfortunately there doesn't seem to be a way
+ * to replace the syntax analyzer phase (named "parser") with a plugin.
  */
 class DocExtractionGlobal(settings: Settings = DocExtractionGlobal.defaultSettings)
     extends Global(settings) {

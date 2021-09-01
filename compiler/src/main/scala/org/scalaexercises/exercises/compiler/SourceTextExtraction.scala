@@ -61,13 +61,13 @@ class SourceTextExtraction {
     absolutePath.split(base).lift(1).getOrElse("")
 
   def extractAll(sources: List[String], paths: List[String], baseDir: String): Extracted = {
-    new global.Run() compileSources (paths zip sources).map({ case (path, code) =>
+    new global.Run() compileSources (paths zip sources).map { case (path, code) =>
       new BatchSourceFile(path, code)
-    })
+    }
     val run = global.currentRun
-    val symbolPaths = Map(run.symSource.toList: _*).map({ case (symbol, file) =>
+    val symbolPaths = Map(run.symSource.toList: _*).map { case (symbol, file) =>
       (symbol.toString, relativePath(file.path, baseDir))
-    })
+    }
     val compilationUnits = run.units.toList // `units` is only only iterable once!
     val extractions      = compilationUnits.map(_.body).map(boundExtractRaw)
 

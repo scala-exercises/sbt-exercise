@@ -170,7 +170,7 @@ case class Compiler() {
 
       contribs.unsafeRunSync().result match {
         case Right(result) =>
-          result.collect({
+          result.collect {
             case Commit(sha, message, date, url, Some(login), Some(avatar_url), Some(author_url)) =>
               ContributionInfo(
                 sha = sha,
@@ -181,7 +181,7 @@ case class Compiler() {
                 avatarUrl = avatar_url,
                 authorUrl = author_url
               )
-          })
+          }
         case Left(ex) => throw ex
       }
     }

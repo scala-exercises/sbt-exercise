@@ -126,18 +126,18 @@ object ExerciseCompilerPlugin extends AutoPlugin {
    * `exercise.Library`.
    */
   private def discoverLibraries(analysis: CompileAnalysis): Seq[String] =
-    Discovery(Set("org.scalaexercises.definitions.Library"), Set.empty)(Tests.allDefs(analysis))
-      .collect({
-        case (definition, discovered) if !discovered.isEmpty => definition.name
-      })
-      .sorted
+    Discovery(Set("org.scalaexercises.definitions.Library"), Set.empty)(
+      Tests.allDefs(analysis)
+    ).collect {
+      case (definition, discovered) if !discovered.isEmpty => definition.name
+    }.sorted
 
   private def discoverSections(analysis: CompileAnalysis): Seq[String] =
-    Discovery(Set("org.scalaexercises.definitions.Section"), Set.empty)(Tests.allDefs(analysis))
-      .collect({
-        case (definition, discovered) if !discovered.isEmpty => definition.name
-      })
-      .sorted
+    Discovery(Set("org.scalaexercises.definitions.Section"), Set.empty)(
+      Tests.allDefs(analysis)
+    ).collect {
+      case (definition, discovered) if !discovered.isEmpty => definition.name
+    }.sorted
 
   // reflection is used to invoke a java-style interface to the exercise compiler
   private val COMPILER_CLASS = "org.scalaexercises.compiler.CompilerJava"

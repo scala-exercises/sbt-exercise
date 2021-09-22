@@ -17,13 +17,13 @@ lazy val V = new {
   val github4s: String            = "0.28.5"
   val http4s: String              = "0.21.28"
   val runtime: String             = "0.6.4"
-  val scala: String               = "2.13.6"
-  val scala212: String            = "2.12.12"
+  val scala: String               = "2.13.3"
+  val scala212: String            = "2.12.15"
   val scalacheck: String          = "1.15.4"
-  val scalacheckShapeless: String = "1.2.5"
+  val scalacheckShapeless: String = "1.3.0"
   val scalamacros: String         = "2.1.1"
   val scalariform: String         = "0.2.10"
-  val scalatest: String           = "3.2.9"
+  val scalatest: String           = "3.2.10"
 }
 
 lazy val definitions = (project in file("definitions"))
@@ -34,7 +34,7 @@ lazy val definitions = (project in file("definitions"))
       "org.typelevel"              %% "cats-core"                 % V.cats,
       "org.scalatest"              %% "scalatest"                 % V.scalatest,
       "org.scalacheck"             %% "scalacheck"                % V.scalacheck,
-      "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % V.scalacheckShapeless
+      "com.github.alexarchambault" %% "scalacheck-shapeless_1.15" % V.scalacheckShapeless
     )
   )
 

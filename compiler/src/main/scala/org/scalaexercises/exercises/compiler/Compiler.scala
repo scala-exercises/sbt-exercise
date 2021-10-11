@@ -26,7 +26,7 @@ import Comments.Mode
 import CommentRendering.RenderedComment
 import cats.effect.{ContextShift, IO}
 import github4s.domain.Commit
-import org.http4s.client.blaze.BlazeClientBuilder
+import org.http4s.blaze.client.BlazeClientBuilder
 
 import scala.concurrent.ExecutionContext
 

@@ -14,8 +14,8 @@ addCommandAlias("ci-publish", ";github; ci-release")
 lazy val V = new {
   val cats: String                = "2.6.1"
   val collectioncompat: String    = "2.5.0"
-  val github4s: String            = "0.30.0"
-  val http4s: String              = "0.21.29"
+  val github4s: String            = "0.28.5"
+  val http4s: String              = "0.21.30"
   val runtime: String             = "0.6.4"
   val scala: String               = "2.13.6"
   val scala212: String            = "2.12.15"

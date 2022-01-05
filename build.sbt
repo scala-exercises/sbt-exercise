@@ -69,7 +69,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     libraryDependencies += "org.typelevel" %% "cats-core" % V.cats % Compile,
     addCompilerPlugin("org.scalamacros" % "paradise" % V.scalamacros cross CrossVersion.full),
     // Leverage build info to populate compiler classpath--
-    compilerClasspath := { fullClasspath in (compiler, Compile) }.value,
+    compilerClasspath := { (compiler / Compile / fullClasspath) }.value,
     buildInfoObject   := "Meta",
     buildInfoPackage  := "org.scalaexercises.plugin.sbtexercise",
     buildInfoKeys := Seq(
@@ -87,9 +87,9 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     scriptedBufferLog := false,
     // Publish definitions before running scripted
     scriptedDependencies := {
-      val x = (compile in Test).value
-      val y = (publishLocal in definitions).value
-      val z = (publishLocal in compiler).value
+      val x = (Test / compile).value
+      val y = (definitions / publishLocal).value
+      val z = (compiler / publishLocal).value
       ()
     }
   )

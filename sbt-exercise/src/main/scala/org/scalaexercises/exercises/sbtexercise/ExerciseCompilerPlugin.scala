@@ -26,10 +26,11 @@ import java.io.PrintStream
 import sbt.{`package` => _, _}
 import sbt.Keys._
 import xsbt.api.Discovery
+import java.nio.file.Paths
 import cats.{`package` => _}
 import cats.data.Ior
 import cats.implicits._
-import sbt.internal.inc.Analysis
+import sbt.internal.inc.{Analysis, MappedVirtualFile}
 import sbt.internal.inc.classpath.ClasspathUtilities
 import sbtbuildinfo.BuildInfoPlugin
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
@@ -210,7 +211,12 @@ object ExerciseCompilerPlugin extends AutoPlugin {
             .flatMap(analysisIn match {
               case analysis: Analysis => analysis.relations.definesClass
             })
-            .map(file => (file.getPath, IO.read(file)))
+            .map(file =>
+              (
+                file.name(),
+                IO.readStream(MappedVirtualFile(file.name(), Map("" -> Paths.get("."))).input())
+              )
+            )
 
           captureStdStreams(
             fOut = log.info(_: String),

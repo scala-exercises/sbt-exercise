@@ -212,11 +212,13 @@ object ExerciseCompilerPlugin extends AutoPlugin {
               case analysis: Analysis => analysis.relations.definesClass
             })
             .map { file =>
-              println(s"Name: ${file.name()}, base path: ${baseDir.getAbsolutePath()}")
               (
                 file.name(),
                 IO.readStream(
-                  MappedVirtualFile(file.name(), Map("" -> Paths.get(baseDir.getAbsolutePath())))
+                  MappedVirtualFile(
+                    s"${baseDir.getAbsolutePath()}/${file.name()}",
+                    Map("" -> Paths.get(baseDir.getAbsolutePath()))
+                  )
                     .input()
                 )
               )

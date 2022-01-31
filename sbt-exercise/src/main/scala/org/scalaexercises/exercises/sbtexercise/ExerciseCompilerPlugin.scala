@@ -214,7 +214,10 @@ object ExerciseCompilerPlugin extends AutoPlugin {
             .map(file =>
               (
                 file.name(),
-                IO.readStream(MappedVirtualFile(file.name(), Map("" -> Paths.get("."))).input())
+                IO.readStream(
+                  MappedVirtualFile(file.name(), Map("" -> Paths.get(baseDir.getAbsolutePath())))
+                    .input()
+                )
               )
             )
 

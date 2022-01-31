@@ -2,10 +2,12 @@ package stdlib
 
 import org.scalaexercises.definitions.Section
 
-/** This is a Section Foo
-  *
-  * @param name foo
-  */
+/**
+ * This is a Section Foo
+ *
+ * @param name
+ *   foo
+ */
 object FooSection extends Section {
 
   /** Exercise foo 1 */

@@ -21,9 +21,8 @@ import scala.reflect.api.Universe
 import org.scalaexercises.compiler.formatting._
 
 /**
- * This is responsible for generating exercise code. It generates
- * scala compiler trees, which can be evaluated or rendered to
- * source code.
+ * This is responsible for generating exercise code. It generates scala compiler trees, which can be
+ * evaluated or rendered to source code.
  */
 case class TreeGen[U <: Universe](
     u: U = scala.reflect.runtime.universe

@@ -211,7 +211,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
             .flatMap(analysisIn match {
               case analysis: Analysis => analysis.relations.definesClass
             })
-            .map(file =>
+            .map { file =>
+              println(s"Name: ${file.name()}, base path: ${baseDir.getAbsolutePath()}")
               (
                 file.name(),
                 IO.readStream(
@@ -219,7 +220,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
                     .input()
                 )
               )
-            )
+            }
 
           captureStdStreams(
             fOut = log.info(_: String),

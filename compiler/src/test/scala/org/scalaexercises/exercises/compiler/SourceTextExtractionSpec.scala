@@ -70,7 +70,7 @@ class SourceTextExtractionSpec extends AnyFunSpec with Matchers with Inside {
   describe("source text extraction with multi-level deep package") {
 
     val multiLevelPackage = "com.my.nestedPackage"
-    val code              = s"""
+    val code = s"""
       /** This is a comment that gets ignored */
       import scala.collection.immutable.{ Seq => Seqq }
       package $multiLevelPackage {

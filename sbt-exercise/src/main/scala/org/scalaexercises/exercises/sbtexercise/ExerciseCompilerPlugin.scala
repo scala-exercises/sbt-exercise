@@ -30,13 +30,12 @@ import java.nio.file.Paths
 import cats.{`package` => _}
 import cats.data.Ior
 import cats.implicits._
-import sbt.internal.inc.{Analysis, MappedVirtualFile}
-import sbt.internal.inc.classpath.ClasspathUtilities
+import sbt.internal.inc.Analysis
+import sbt.internal.inc.classpath.ClasspathUtil
 import sbtbuildinfo.BuildInfoPlugin
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
 import xsbti.compile.CompileAnalysis
-
-import scala.jdk.CollectionConverters._
+import _root_.java.nio.file.Paths
 
 /** The exercise compiler SBT auto plugin */
 object ExerciseCompilerPlugin extends AutoPlugin {
@@ -168,12 +167,12 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
       val libraryClasspath = Attributed.data((fullClasspath in Compile).value)
       val classpath        = (Meta.compilerClasspath ++ libraryClasspath).distinct
-      val loader = ClasspathUtilities.toLoader(
-        classpath,
+      val loader = ClasspathUtil.toLoader(
+        classpath.map(file => Paths.get(file.getAbsolutePath())),
         null,
-        ClasspathUtilities.createClasspathResources(
-          appPaths = Meta.compilerClasspath,
-          bootPaths = scalaInstance.value.allJars
+        ClasspathUtil.createClasspathResources(
+          appPaths = Meta.compilerClasspath.map(file => Paths.get(file.getAbsolutePath())),
+          bootPaths = scalaInstance.value.allJars.map(file => Paths.get(file.getAbsolutePath()))
         )
       )
 

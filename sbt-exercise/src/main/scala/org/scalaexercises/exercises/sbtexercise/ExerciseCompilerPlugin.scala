@@ -230,7 +230,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
                 file.name(),
                 IO.readStream(
                   MappedVirtualFile(
-                    s"${baseDir.getAbsolutePath()}/${file.name()}",
+                    s"${baseDir.getAbsolutePath()}/main/scala/${file.name()}",
                     Map("" -> Paths.get(baseDir.getAbsolutePath()))
                   )
                     .input()

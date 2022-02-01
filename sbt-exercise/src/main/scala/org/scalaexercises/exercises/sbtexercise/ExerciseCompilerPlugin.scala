@@ -30,7 +30,7 @@ import java.nio.file.Paths
 import cats.{`package` => _}
 import cats.data.Ior
 import cats.implicits._
-import sbt.internal.inc.{Analysis, MappedVirtualFile}
+import sbt.internal.inc.Analysis
 import sbt.internal.inc.classpath.ClasspathUtil
 import sbtbuildinfo.BuildInfoPlugin
 import sbtbuildinfo.BuildInfoPlugin.autoImport._

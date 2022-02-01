@@ -67,22 +67,22 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
       products := {
         products.value ++
-        (products in Compile).value
+        (Compile / products).value
       },
 
       sourceGenerators   += generateExerciseSourcesTask,
       generateExercises  := generateExercisesTask.value
     )) ++
     Seq(
-      compile        := (compile in CompileGeneratedExercises).value,
-      copyResources  := (copyResources in CompileGeneratedExercises).value,
-      `package`      := (`package` in CompileGeneratedExercises).value,
-      artifacts    ++= Classpaths.artifactDefs(Seq(packageBin in CompileGeneratedExercises)).value,
-      artifact in (CompileGeneratedExercises, packageBin) ~= { _.withClassifier(None)},
+      compile        := (CompileGeneratedExercises / compile).value,
+      copyResources  := (CompileGeneratedExercises / copyResources).value,
+      `package`      := (CompileGeneratedExercises / `package`).value,
+      artifacts    ++= Classpaths.artifactDefs(Seq((CompileGeneratedExercises / packageBin))).value,
+      (CompileGeneratedExercises / packageBin / artifact) ~= { _.withClassifier(None)},
       ivyConfigurations   :=
         overrideConfigs(CompileGeneratedExercises, CustomCompile)(ivyConfigurations.value),
-      classDirectory in CompileGeneratedExercises := (classDirectory in Compile).value,
-      classpathConfiguration in CompileGeneratedExercises := (classpathConfiguration in Compile).value,
+      (CompileGeneratedExercises / classDirectory) := (Compile / classDirectory).value,
+      (CompileGeneratedExercises / classpathConfiguration) := (Compile / classpathConfiguration).value,
       fetchContributors := true,
       buildInfoObject   := "LibMetaInfo",
       buildInfoPackage  := "org.scalaexercises.content",
@@ -159,13 +159,13 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   def generateExercisesTask =
     Def.task {
       val log             = streams.value.log
-      val baseDir         = (baseDirectory in Compile).value
+      val baseDir         = (Compile / baseDirectory).value
       lazy val analysisIn = (Compile / compile).value
 
       lazy val libraryNames = discoverLibraries(analysisIn)
       lazy val sectionNames = discoverSections(analysisIn)
 
-      val libraryClasspath = Attributed.data((fullClasspath in Compile).value)
+      val libraryClasspath = Attributed.data((Compile / fullClasspath).value)
       val classpath        = (Meta.compilerClasspath ++ libraryClasspath).distinct
       val loader = ClasspathUtil.toLoader(
         classpath.map(file => Paths.get(file.getAbsolutePath())),
@@ -276,7 +276,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
       val generated = generateExercises.value
 
-      val dir = (sourceManaged in Compile).value
+      val dir = (Compile / sourceManaged).value
       generated.map { case (n, code) =>
         val file = dir / (n.replace(".", "/") + ".scala")
         IO.write(file, code)

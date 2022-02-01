@@ -26,7 +26,7 @@ import java.io.PrintStream
 import sbt.{`package` => _, _}
 import sbt.Keys._
 import xsbt.api.Discovery
-import java.nio.file.Paths
+import java.nio.file.{Path, Paths}
 import cats.{`package` => _}
 import cats.data.Ior
 import cats.implicits._
@@ -35,6 +35,8 @@ import sbt.internal.inc.classpath.ClasspathUtilities
 import sbtbuildinfo.BuildInfoPlugin
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
 import xsbti.compile.CompileAnalysis
+
+import scala.jdk.CollectionConverters._
 
 /** The exercise compiler SBT auto plugin */
 object ExerciseCompilerPlugin extends AutoPlugin {
@@ -161,6 +163,12 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       val baseDir         = (baseDirectory in Compile).value
       lazy val analysisIn = (Compile / compile).value
 
+      println(s"""All files relative to base dir: ${java.nio.file.Files
+        .walk(Path.of(baseDir.getAbsolutePath()))
+        .toList
+        .asScala
+        .mkString("\n")}""")
+
       lazy val libraryNames = discoverLibraries(analysisIn)
       lazy val sectionNames = discoverSections(analysisIn)
 
@@ -212,7 +220,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
               case analysis: Analysis => analysis.relations.definesClass
             })
             .map { file =>
-              // Updates here are EXTREMELY AD HOC, and come with a stronger caveat than usual
+              // Changes here are EXTREMELY AD HOC, and come with a stronger caveat than usual
               // that I have no idea what I'm doing. I went into sbt release notes to check for
               // info about virtualizing the file system but didn't find a ton on the API, so I'm
               // pursuing changes here from with the goal of "make stuff work," not "do the

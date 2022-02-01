@@ -26,14 +26,16 @@ import java.io.PrintStream
 import sbt.{`package` => _, _}
 import sbt.Keys._
 import xsbt.api.Discovery
+import java.nio.file.Paths
 import cats.{`package` => _}
 import cats.data.Ior
 import cats.implicits._
 import sbt.internal.inc.Analysis
-import sbt.internal.inc.classpath.ClasspathUtilities
+import sbt.internal.inc.classpath.ClasspathUtil
 import sbtbuildinfo.BuildInfoPlugin
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
 import xsbti.compile.CompileAnalysis
+import _root_.java.nio.file.Paths
 
 /** The exercise compiler SBT auto plugin */
 object ExerciseCompilerPlugin extends AutoPlugin {
@@ -100,15 +102,14 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     Seq(
       // v0.13.9/main/src/main/scala/sbt/Defaults.scala
       sourceDirectory := reconfigureSub(sourceDirectory).value,
-      sourceManaged := reconfigureSub(sourceManaged).value,
+      sourceManaged   := reconfigureSub(sourceManaged).value,
       resourceManaged := reconfigureSub(resourceManaged).value
     )
 
   /**
-   * Helper to facilitate changing the directories. By default, a configuration
-   * inheriting from Compile will compile source in
-   * `src/<configuration_name>/[scala|test|...]`. This forces the directory
-   * back to `src/main/[scala|test|...]`.
+   * Helper to facilitate changing the directories. By default, a configuration inheriting from
+   * Compile will compile source in `src/<configuration_name>/[scala|test|...]`. This forces the
+   * directory back to `src/main/[scala|test|...]`.
    */
   private def reconfigureSub(key: SettingKey[File]): Def.Initialize[File] =
     Def.setting((ThisScope.copy(config = Global.config) / key).value / "main")
@@ -123,22 +124,22 @@ object ExerciseCompilerPlugin extends AutoPlugin {
     Either.catchNonFatal(f).leftMap(e => Ior.both(msg, e))
 
   /**
-   * Given an Analysis output from a compile run, this will
-   * identify all modules implementing `exercise.Library`.
+   * Given an Analysis output from a compile run, this will identify all modules implementing
+   * `exercise.Library`.
    */
   private def discoverLibraries(analysis: CompileAnalysis): Seq[String] =
-    Discovery(Set("org.scalaexercises.definitions.Library"), Set.empty)(Tests.allDefs(analysis))
-      .collect({
-        case (definition, discovered) if !discovered.isEmpty => definition.name
-      })
-      .sorted
+    Discovery(Set("org.scalaexercises.definitions.Library"), Set.empty)(
+      Tests.allDefs(analysis)
+    ).collect {
+      case (definition, discovered) if !discovered.isEmpty => definition.name
+    }.sorted
 
   private def discoverSections(analysis: CompileAnalysis): Seq[String] =
-    Discovery(Set("org.scalaexercises.definitions.Section"), Set.empty)(Tests.allDefs(analysis))
-      .collect({
-        case (definition, discovered) if !discovered.isEmpty => definition.name
-      })
-      .sorted
+    Discovery(Set("org.scalaexercises.definitions.Section"), Set.empty)(
+      Tests.allDefs(analysis)
+    ).collect {
+      case (definition, discovered) if !discovered.isEmpty => definition.name
+    }.sorted
 
   // reflection is used to invoke a java-style interface to the exercise compiler
   private val COMPILER_CLASS = "org.scalaexercises.compiler.CompilerJava"
@@ -166,12 +167,12 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
       val libraryClasspath = Attributed.data((fullClasspath in Compile).value)
       val classpath        = (Meta.compilerClasspath ++ libraryClasspath).distinct
-      val loader = ClasspathUtilities.toLoader(
-        classpath,
+      val loader = ClasspathUtil.toLoader(
+        classpath.map(file => Paths.get(file.getAbsolutePath())),
         null,
-        ClasspathUtilities.createClasspathResources(
-          appPaths = Meta.compilerClasspath,
-          bootPaths = scalaInstance.value.allJars
+        ClasspathUtil.createClasspathResources(
+          appPaths = Meta.compilerClasspath.map(file => Paths.get(file.getAbsolutePath())),
+          bootPaths = scalaInstance.value.allJars.map(file => Paths.get(file.getAbsolutePath()))
         )
       )
 
@@ -211,7 +212,16 @@ object ExerciseCompilerPlugin extends AutoPlugin {
             .flatMap(analysisIn match {
               case analysis: Analysis => analysis.relations.definesClass
             })
-            .map(file => (file.getPath, IO.read(file)))
+            .map { file =>
+              (
+                file.name(),
+                IO.read(
+                  new File(
+                    (baseDir.getParentFile() +: file.names().tail).mkString("/")
+                  )
+                )
+              )
+            }
 
           captureStdStreams(
             fOut = log.info(_: String),
@@ -292,7 +302,8 @@ object ExerciseCompilerPlugin extends AutoPlugin {
   /**
    * Output stream that captures an output on a line by line basis.
    *
-   * @param f the function to invoke with each line
+   * @param f
+   *   the function to invoke with each line
    */
   private[this] class LineByLineOutputStream(
       f: (String) => Unit

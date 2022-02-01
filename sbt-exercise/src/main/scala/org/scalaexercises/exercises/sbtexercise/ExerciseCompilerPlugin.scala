@@ -163,13 +163,6 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       val baseDir         = (baseDirectory in Compile).value
       lazy val analysisIn = (Compile / compile).value
 
-      println(s"""All files relative to base dir: ${java.nio.file.Files
-        .walk(Paths.get(baseDir.getAbsolutePath()))
-        .iterator()
-        .asScala
-        .toList
-        .mkString("\n")}""")
-
       lazy val libraryNames = discoverLibraries(analysisIn)
       lazy val sectionNames = discoverSections(analysisIn)
 

@@ -26,7 +26,7 @@ import java.io.PrintStream
 import sbt.{`package` => _, _}
 import sbt.Keys._
 import xsbt.api.Discovery
-import java.nio.file.{Path, Paths}
+import java.nio.file.Paths
 import cats.{`package` => _}
 import cats.data.Ior
 import cats.implicits._
@@ -164,7 +164,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
       lazy val analysisIn = (Compile / compile).value
 
       println(s"""All files relative to base dir: ${java.nio.file.Files
-        .walk(Path.of(baseDir.getAbsolutePath()))
+        .walk(Paths.get(baseDir.getAbsolutePath()))
         .toList
         .asScala
         .mkString("\n")}""")

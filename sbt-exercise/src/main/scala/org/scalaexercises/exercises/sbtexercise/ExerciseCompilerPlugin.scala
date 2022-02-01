@@ -221,6 +221,9 @@ object ExerciseCompilerPlugin extends AutoPlugin {
               case analysis: Analysis => analysis.relations.definesClass
             })
             .map { file =>
+              println(
+                s"File info: ${file.names()}, ${baseDir.getAbsolutePath()}, ${baseDir.getCanonicalPath()}"
+              )
               // Changes here are EXTREMELY AD HOC, and come with a stronger caveat than usual
               // that I have no idea what I'm doing. I went into sbt release notes to check for
               // info about virtualizing the file system but didn't find a ton on the API, so I'm

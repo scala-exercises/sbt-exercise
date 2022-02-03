@@ -24,11 +24,10 @@ import cats.implicits._
 import github4s.Github
 import Comments.Mode
 import CommentRendering.RenderedComment
-import cats.effect.{ContextShift, IO}
+import cats.effect.IO
+import cats.effect.unsafe.IORuntime
 import github4s.domain.Commit
 import org.http4s.blaze.client.BlazeClientBuilder
-
-import scala.concurrent.ExecutionContext
 
 class CompilerJava {
   def compile(
@@ -59,10 +58,9 @@ case class Compiler() {
 
   lazy val sourceTextExtractor = new SourceTextExtraction()
 
-  implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
-  implicit val ec: ExecutionContext = ExecutionContext.global
+  implicit val ioRuntime: IORuntime = IORuntime.global
 
-  lazy val clientResource = BlazeClientBuilder[IO](ec).resource
+  lazy val clientResource = BlazeClientBuilder[IO].resource
 
   def compile(
       library: Library,

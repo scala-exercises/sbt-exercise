@@ -290,7 +290,7 @@ object DocExtractionGlobal {
       embeddedDefaults[DocExtractionGlobal.type]
       // this flag is crucial for method body extraction
       Yrangepos.value = true
-      usejavacp.value = true
+      usejavacp.value = false
 
       bootclasspath.value = CompilerSettings.paths.mkString(File.pathSeparator)
       classpath.value = CompilerSettings.paths.mkString(File.pathSeparator)

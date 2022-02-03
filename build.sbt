@@ -1,6 +1,6 @@
-ThisBuild / organization := "org.scala-exercises"
+ThisBuild / organization       := "org.scala-exercises"
 ThisBuild / githubOrganization := "47degrees"
-ThisBuild / scalaVersion := V.scala212
+ThisBuild / scalaVersion       := V.scala212
 
 publish / skip := true
 
@@ -12,18 +12,18 @@ addCommandAlias("ci-docs", ";github; mdoc; headerCreateAll")
 addCommandAlias("ci-publish", ";github; ci-release")
 
 lazy val V = new {
-  val cats: String                = "2.6.1"
-  val collectioncompat: String    = "2.4.4"
+  val cats: String                = "2.7.0"
+  val collectioncompat: String    = "2.6.0"
   val github4s: String            = "0.28.5"
-  val http4s: String              = "0.21.24"
+  val http4s: String              = "0.21.31"
   val runtime: String             = "0.6.4"
-  val scala: String               = "2.13.3"
-  val scala212: String            = "2.12.12"
+  val scala: String               = "2.13.8"
+  val scala212: String            = "2.12.15"
   val scalacheck: String          = "1.15.4"
-  val scalacheckShapeless: String = "1.2.5"
+  val scalacheckShapeless: String = "1.3.0"
   val scalamacros: String         = "2.1.1"
   val scalariform: String         = "0.2.10"
-  val scalatest: String           = "3.2.9"
+  val scalatest: String           = "3.2.10"
 }
 
 lazy val definitions = (project in file("definitions"))
@@ -34,18 +34,18 @@ lazy val definitions = (project in file("definitions"))
       "org.typelevel"              %% "cats-core"                 % V.cats,
       "org.scalatest"              %% "scalatest"                 % V.scalatest,
       "org.scalacheck"             %% "scalacheck"                % V.scalacheck,
-      "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % V.scalacheckShapeless
+      "com.github.alexarchambault" %% "scalacheck-shapeless_1.15" % V.scalacheckShapeless
     )
   )
 
 lazy val compiler = (project in file("compiler"))
   .settings(name := "exercise-compiler")
   .settings(
-    exportJars := true,
+    exportJars         := true,
     crossScalaVersions := Seq(V.scala212, V.scala),
     scalacOptions -= "-Xfatal-warnings",
     libraryDependencies ++= Seq(
-      "org.scala-exercises"    %% "runtime"                 % V.runtime exclude ("org.scala-lang.modules", "scala-collection-compat"),
+      "org.scala-exercises" %% "runtime" % V.runtime exclude ("org.scala-lang.modules", "scala-collection-compat"),
       "org.scala-lang"          % "scala-compiler"          % scalaVersion.value,
       "org.scala-lang.modules" %% "scala-collection-compat" % V.collectioncompat,
       "org.typelevel"          %% "cats-core"               % V.cats      % Compile,
@@ -69,9 +69,9 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     libraryDependencies += "org.typelevel" %% "cats-core" % V.cats % Compile,
     addCompilerPlugin("org.scalamacros" % "paradise" % V.scalamacros cross CrossVersion.full),
     // Leverage build info to populate compiler classpath--
-    compilerClasspath := { fullClasspath in (compiler, Compile) }.value,
-    buildInfoObject := "Meta",
-    buildInfoPackage := "org.scalaexercises.plugin.sbtexercise",
+    compilerClasspath := { (compiler / Compile / fullClasspath) }.value,
+    buildInfoObject   := "Meta",
+    buildInfoPackage  := "org.scalaexercises.plugin.sbtexercise",
     buildInfoKeys := Seq(
       version,
       BuildInfoKey.map(compilerClasspath) { case (_, classFiles) ⇒
@@ -87,9 +87,9 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
     scriptedBufferLog := false,
     // Publish definitions before running scripted
     scriptedDependencies := {
-      val x = (compile in Test).value
-      val y = (publishLocal in definitions).value
-      val z = (publishLocal in compiler).value
+      val x = (Test / compile).value
+      val y = (definitions / publishLocal).value
+      val z = (compiler / publishLocal).value
       ()
     }
   )

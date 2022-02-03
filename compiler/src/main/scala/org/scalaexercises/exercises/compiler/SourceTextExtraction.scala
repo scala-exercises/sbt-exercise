@@ -61,13 +61,13 @@ class SourceTextExtraction {
     absolutePath.split(base).lift(1).getOrElse("")
 
   def extractAll(sources: List[String], paths: List[String], baseDir: String): Extracted = {
-    new global.Run() compileSources (paths zip sources).map({ case (path, code) =>
+    new global.Run() compileSources (paths zip sources).map { case (path, code) =>
       new BatchSourceFile(path, code)
-    })
+    }
     val run = global.currentRun
-    val symbolPaths = Map(run.symSource.toList: _*).map({ case (symbol, file) =>
+    val symbolPaths = Map(run.symSource.toList: _*).map { case (symbol, file) =>
       (symbol.toString, relativePath(file.path, baseDir))
-    })
+    }
     val compilationUnits = run.units.toList // `units` is only only iterable once!
     val extractions      = compilationUnits.map(_.body).map(boundExtractRaw)
 
@@ -118,8 +118,7 @@ class SourceTextExtraction {
 }
 
 /**
- * Utility to find doc exercise-worthy comments and source code blobs
- * in a tree.
+ * Utility to find doc exercise-worthy comments and source code blobs in a tree.
  */
 object SourceTextExtraction {
 
@@ -135,8 +134,7 @@ object SourceTextExtraction {
     import g._
 
     /**
-     * Define generic accumulating traversal that visits all the nodes of
-     * interest.
+     * Define generic accumulating traversal that visits all the nodes of interest.
      */
     def traverse[A](
         trees0: List[(Path[g.type], Tree)],
@@ -260,12 +258,11 @@ object SourceTextExtraction {
 }
 
 /**
- * Scala compiler global needed for extracting doc comments. This uses the
- * ScaladocSyntaxAnalyzer, which keeps DocDefs in the parsed AST.
+ * Scala compiler global needed for extracting doc comments. This uses the ScaladocSyntaxAnalyzer,
+ * which keeps DocDefs in the parsed AST.
  *
- * It would be ideal to do this as a compiler plugin. Unfortunately there
- * doesn't seem to be a way to replace the syntax analyzer phase (named
- * "parser") with a plugin.
+ * It would be ideal to do this as a compiler plugin. Unfortunately there doesn't seem to be a way
+ * to replace the syntax analyzer phase (named "parser") with a plugin.
  */
 class DocExtractionGlobal(settings: Settings = DocExtractionGlobal.defaultSettings)
     extends Global(settings) {
@@ -293,7 +290,7 @@ object DocExtractionGlobal {
       embeddedDefaults[DocExtractionGlobal.type]
       // this flag is crucial for method body extraction
       Yrangepos.value = true
-      usejavacp.value = true
+      usejavacp.value = false
 
       bootclasspath.value = CompilerSettings.paths.mkString(File.pathSeparator)
       classpath.value = CompilerSettings.paths.mkString(File.pathSeparator)

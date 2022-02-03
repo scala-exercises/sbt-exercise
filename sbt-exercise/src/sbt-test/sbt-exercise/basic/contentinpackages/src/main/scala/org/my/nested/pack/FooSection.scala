@@ -2,10 +2,12 @@ package org.my.nested.pack
 
 import org.scalaexercises.definitions.Section
 
-/** This is a Section Foo in package org.my.nested.pack
-  *
-  * @param name foo
-  */
+/**
+ * This is a Section Foo in package org.my.nested.pack
+ *
+ * @param name
+ *   foo
+ */
 object FooSection extends Section {
 
   /** Exercise foo 1 */

@@ -24,11 +24,10 @@ import cats.implicits._
 import github4s.Github
 import Comments.Mode
 import CommentRendering.RenderedComment
-import cats.effect.{ContextShift, IO}
+import cats.effect.IO
+import cats.effect.unsafe.IORuntime
 import github4s.domain.Commit
-import org.http4s.client.blaze.BlazeClientBuilder
-
-import scala.concurrent.ExecutionContext
+import org.http4s.blaze.client.BlazeClientBuilder
 
 class CompilerJava {
   def compile(
@@ -51,7 +50,7 @@ class CompilerJava {
         targetPackage,
         fetchContributors
       )
-      .fold(`🍺` => throw new Exception(`🍺`), out => Array(out._1, out._2))
+      .fold(err => throw new Exception(err), out => Array(out._1, out._2))
   }
 }
 
@@ -59,10 +58,9 @@ case class Compiler() {
 
   lazy val sourceTextExtractor = new SourceTextExtraction()
 
-  implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContext.global)
-  implicit val ec: ExecutionContext = ExecutionContext.global
+  implicit val ioRuntime: IORuntime = IORuntime.global
 
-  lazy val clientResource = BlazeClientBuilder[IO](ec).resource
+  lazy val clientResource = BlazeClientBuilder[IO].resource
 
   def compile(
       library: Library,
@@ -170,7 +168,7 @@ case class Compiler() {
 
       contribs.unsafeRunSync().result match {
         case Right(result) =>
-          result.collect({
+          result.collect {
             case Commit(sha, message, date, url, Some(login), Some(avatar_url), Some(author_url)) =>
               ContributionInfo(
                 sha = sha,
@@ -181,7 +179,7 @@ case class Compiler() {
                 avatarUrl = avatar_url,
                 authorUrl = author_url
               )
-          })
+          }
         case Left(ex) => throw ex
       }
     }
@@ -374,7 +372,7 @@ case class Compiler() {
 
     private lazy val EMPTY_PACKAGE_NAME_STRING = unapplyRawName(termNames.EMPTY_PACKAGE_NAME)
     private lazy val ROOTPKG_STRING            = unapplyRawName(termNames.ROOTPKG)
-    private lazy val ROOT                      = "<root>" // can't find an accessible constant for this
+    private lazy val ROOT = "<root>" // can't find an accessible constant for this
 
   }
 

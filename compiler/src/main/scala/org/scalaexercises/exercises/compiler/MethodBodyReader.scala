@@ -38,11 +38,9 @@ object MethodBodyReader {
   }
 
   /**
-   * Finds the text range for the body of the method.
-   * This should:
-   * - ignore the wrapping block brackets
-   * - include any leading whitespace before the first expression
-   * in multi line statements
+   * Finds the text range for the body of the method. This should:
+   *   - ignore the wrapping block brackets
+   *   - include any leading whitespace before the first expression in multi line statements
    */
   def bodyRange[G <: Global](g: G)(tree: g.Tree): (Int, Int) = {
     import g._
@@ -79,8 +77,8 @@ object MethodBodyReader {
   }
 
   /**
-   * This attempts to find all the individual lines in a method body
-   * while also counting the amount of common prefix whitespace on each line.
+   * This attempts to find all the individual lines in a method body while also counting the amount
+   * of common prefix whitespace on each line.
    */
   private def normalizedLineRanges(str: Array[Char], start: Int, end: Int): List[(Int, Int)] = {
 

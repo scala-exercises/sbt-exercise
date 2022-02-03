@@ -2,7 +2,7 @@ val pluginVersion = System.getProperty("plugin.version")
 
 lazy val root = (project in file("."))
   .settings(
-    scalaVersion := "2.12.11",
+    scalaVersion := "2.12.15",
     resolvers ++= Seq(
       Resolver.sonatypeRepo("snapshots"),
       Resolver.defaultLocal

@@ -51,7 +51,7 @@ class CompilerJava {
         targetPackage,
         fetchContributors
       )
-      .fold(`🍺` => throw new Exception(`🍺`), out => Array(out._1, out._2))
+      .fold(err => throw new Exception(err), out => Array(out._1, out._2))
   }
 }
 

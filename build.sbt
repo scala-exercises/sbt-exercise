@@ -9,7 +9,7 @@ addCommandAlias(
   ";scalafmtCheckAll; scalafmtSbtCheck; +test; +publishLocal; sbt-exercise/scripted"
 )
 addCommandAlias("ci-docs", ";github; mdoc; headerCreateAll")
-addCommandAlias("ci-publish", "debug; show developers; github; show developers; ci-release")
+addCommandAlias("ci-publish", "show developers; debug; github; debug; show developers; ci-release")
 
 lazy val V = new {
   val cats: String                = "2.7.0"

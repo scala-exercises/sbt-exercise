@@ -8,7 +8,7 @@
 
 The maintainers of the project are:
 
-
+- [![47erbot](https://avatars.githubusercontent.com/u/24799081?v=4&s=20) **47erbot**](https://github.com/47erbot)
 
 ## Contributors
 
@@ -17,3 +17,4 @@ These are the people that have contributed to the _sbt-exercise_ project:
 - [![47erbot](https://avatars.githubusercontent.com/u/24799081?v=4&s=20) **47erbot**](https://github.com/47erbot)
 - [![juanpedromoreno](https://avatars.githubusercontent.com/u/4879373?v=4&s=20) **juanpedromoreno**](https://github.com/juanpedromoreno)
 - [![fedefernandez](https://avatars.githubusercontent.com/u/720923?v=4&s=20) **fedefernandez**](https://github.com/fedefernandez)
+- [![jisantuc](https://avatars.githubusercontent.com/u/5702984?v=4&s=20) **jisantuc**](https://github.com/jisantuc)

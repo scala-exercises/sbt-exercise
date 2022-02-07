@@ -3,6 +3,7 @@ ThisBuild / githubOrganization := "47degrees"
 ThisBuild / scalaVersion       := V.scala212
 
 publish / skip := true
+ThisBuild / extraCollaborators += Collaborator.github("47erbot")
 
 addCommandAlias(
   "ci-test",

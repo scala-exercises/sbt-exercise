@@ -10,7 +10,12 @@ addCommandAlias(
   ";scalafmtCheckAll; scalafmtSbtCheck; +test; +publishLocal; sbt-exercise/scripted"
 )
 addCommandAlias("ci-docs", ";github; mdoc; headerCreateAll")
-addCommandAlias("ci-publish", "show developers; github; show ThisBuild / githubEnabled; show ThisBuild / collaborators; show developers")
+addCommandAlias("ci-publish", ";github; ci-release")
+
+// Required to prevent errors for eviction from binary incompatible dependency
+// resolutions.
+// See also: https://github.com/scala-exercises/exercises-cats/pull/267
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % "always"
 
 lazy val V = new {
   val cats: String                = "2.7.0"
@@ -24,7 +29,7 @@ lazy val V = new {
   val scalacheckShapeless: String = "1.3.0"
   val scalamacros: String         = "2.1.1"
   val scalariform: String         = "0.2.10"
-  val scalatest: String           = "3.2.10"
+  val scalatest: String           = "3.2.11"
 }
 
 lazy val definitions = (project in file("definitions"))

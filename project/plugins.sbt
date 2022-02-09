@@ -8,3 +8,4 @@ addSbtPlugin("com.alejandrohdezma"       % "sbt-github-header"        % "0.11.2"
 addSbtPlugin("com.alejandrohdezma"       % "sbt-github-mdoc"          % "0.11.2")
 addSbtPlugin("com.alejandrohdezma"       % "sbt-remove-test-from-pom" % "0.1.0")
 addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat"             % "0.1.20")
+addDependencyTreePlugin

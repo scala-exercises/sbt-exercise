@@ -8,9 +8,7 @@ on:
   release:
     types: [published]
   push:
-    branches:
-      - main
-      - test/js/release-on-this-branch
+    branches: main
 
 jobs:
   release:

@@ -11,7 +11,7 @@ lazy val content = (project in file("content"))
       Resolver.defaultLocal
     ),
     libraryDependencies ++= Seq(
-      "org.scala-exercises" %% "runtime"           % "0.6.0",
+      "org.scala-exercises" %% "runtime"           % "0.7.0",
       "org.scala-exercises" %% "exercise-compiler" % pluginVersion changing (),
       "org.scala-exercises" %% "definitions"       % pluginVersion changing ()
     )
@@ -26,7 +26,7 @@ lazy val contentInPackages = (project in file("contentinpackages"))
       Resolver.defaultLocal
     ),
     libraryDependencies ++= Seq(
-      "org.scala-exercises" %% "runtime"           % "0.6.0",
+      "org.scala-exercises" %% "runtime"           % "0.7.0",
       "org.scala-exercises" %% "exercise-compiler" % pluginVersion changing (),
       "org.scala-exercises" %% "definitions"       % pluginVersion changing ()
     )

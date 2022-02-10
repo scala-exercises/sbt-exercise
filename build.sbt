@@ -12,6 +12,12 @@ addCommandAlias(
 addCommandAlias("ci-docs", ";github; mdoc; headerCreateAll")
 addCommandAlias("ci-publish", ";github; ci-release")
 
+def scalaVersionSuffix(scalaVersion: String) = CrossVersion.partialVersion(scalaVersion) match {
+  case Some((2, 12)) => "2.12"
+  case Some((2, 13)) => "2.13"
+  case s             => throw new Exception("$s")
+}
+
 lazy val V = new {
   val cats: String                = "2.7.0"
   val collectioncompat: String    = "2.6.0"
@@ -32,13 +38,13 @@ lazy val definitions = (project in file("definitions"))
   .settings(
     crossScalaVersions := Seq(V.scala212, V.scala),
     libraryDependencies ++= Seq(
-      "org.scala-lang.modules"     %% "scala-xml"                 % "1.2.0",
       "org.typelevel"              %% "cats-core"                 % V.cats,
       "org.scalacheck"             %% "scalacheck"                % V.scalacheck,
       "com.github.alexarchambault" %% "scalacheck-shapeless_1.15" % V.scalacheckShapeless,
-      "org.scalatest" %% "scalatest-core" % V.scalatest exclude ("org.scala-lang.modules", "scala-xml_2.12") exclude ("org.scala-lang.modules", "scala-xml_2.13"),
-      "org.scalatest" %% "scalatest" % V.scalatest exclude ("org.scala-lang.modules", "scala-xml_2.12") exclude ("org.scala-lang.modules", "scala-xml_2.13")
-    )
+      "org.scalatest"              %% "scalatest-core"            % V.scalatest,
+      "org.scalatest"              %% "scalatest"                 % V.scalatest
+    ),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "2.0.1"
   )
 
 lazy val compiler = (project in file("compiler"))
@@ -48,19 +54,19 @@ lazy val compiler = (project in file("compiler"))
     crossScalaVersions := Seq(V.scala212, V.scala),
     scalacOptions -= "-Xfatal-warnings",
     libraryDependencies ++= Seq(
-      "org.scala-lang.modules" %% "scala-xml" % "1.2.0",
       "org.scala-exercises" %% "runtime" % V.runtime exclude ("org.scala-lang.modules", "scala-collection-compat"),
-      "org.scala-lang" % "scala-compiler" % scalaVersion.value exclude ("org.scala-lang.modules", "scala-xml"),
+      "org.scala-lang" % "scala-compiler" % scalaVersion.value,
       "org.scala-lang.modules" %% "scala-collection-compat" % V.collectioncompat,
       "org.typelevel"          %% "cats-core"               % V.cats % Compile,
       "org.http4s"             %% "http4s-blaze-client"     % V.http4s,
       "org.http4s"             %% "http4s-circe"            % V.http4s,
       "com.47deg"              %% "github4s"                % V.github4s,
-      "org.scalariform" %% "scalariform" % V.scalariform exclude ("org.scala-lang.modules", "scala-xml"),
-      "org.typelevel" %% "cats-laws" % V.cats % Test,
-      "org.scalatest" %% "scalatest-core" % V.scalatest % Test exclude ("org.scala-lang.modules", "scala-xml_2.12"),
-      "org.scalatest" %% "scalatest" % V.scalatest % Test exclude ("org.scala-lang.modules", "scala-xml_2.12")
-    )
+      "org.scalariform" %% "scalariform" % V.scalariform,
+      "org.typelevel" %% "cats-laws"      % V.cats      % Test,
+      "org.scalatest" %% "scalatest-core" % V.scalatest % Test,
+      "org.scalatest" %% "scalatest"      % V.scalatest % Test
+    ),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "2.0.1"
   )
   .dependsOn(definitions)
 

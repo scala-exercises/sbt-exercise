@@ -54,7 +54,7 @@ lazy val compiler = (project in file("compiler"))
     crossScalaVersions := Seq(V.scala212, V.scala),
     scalacOptions -= "-Xfatal-warnings",
     libraryDependencies ++= Seq(
-      "org.scala-exercises" %% "runtime" % V.runtime exclude ("org.scala-lang.modules", "scala-collection-compat"),
+      "org.scala-exercises" %% "runtime" % V.runtime,
       "org.scala-lang" % "scala-compiler" % scalaVersion.value,
       "org.scala-lang.modules" %% "scala-collection-compat" % V.collectioncompat,
       "org.typelevel"          %% "cats-core"               % V.cats % Compile,

@@ -217,7 +217,7 @@ object ExerciseCompilerPlugin extends AutoPlugin {
                 file.name(),
                 IO.read(
                   new File(
-                    (baseDir.getParentFile() +: file.names()).mkString("/")
+                    (baseDir.getParentFile() +: baseDir.name +: file.names().tail).mkString("/")
                   )
                 )
               )

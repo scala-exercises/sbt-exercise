@@ -26,14 +26,16 @@ import java.io.PrintStream
 import sbt.{`package` => _, _}
 import sbt.Keys._
 import xsbt.api.Discovery
+import java.nio.file.Paths
 import cats.{`package` => _}
 import cats.data.Ior
 import cats.implicits._
 import sbt.internal.inc.Analysis
-import sbt.internal.inc.classpath.ClasspathUtilities
+import sbt.internal.inc.classpath.ClasspathUtil
 import sbtbuildinfo.BuildInfoPlugin
 import sbtbuildinfo.BuildInfoPlugin.autoImport._
 import xsbti.compile.CompileAnalysis
+import _root_.java.nio.file.Paths
 
 /** The exercise compiler SBT auto plugin */
 object ExerciseCompilerPlugin extends AutoPlugin {
@@ -165,12 +167,12 @@ object ExerciseCompilerPlugin extends AutoPlugin {
 
       val libraryClasspath = Attributed.data((Compile / fullClasspath).value)
       val classpath        = (Meta.compilerClasspath ++ libraryClasspath).distinct
-      val loader = ClasspathUtilities.toLoader(
-        classpath,
+      val loader = ClasspathUtil.toLoader(
+        classpath.map(file => Paths.get(file.getAbsolutePath())),
         null,
-        ClasspathUtilities.createClasspathResources(
-          appPaths = Meta.compilerClasspath,
-          bootPaths = scalaInstance.value.allJars
+        ClasspathUtil.createClasspathResources(
+          appPaths = Meta.compilerClasspath.map(file => Paths.get(file.getAbsolutePath())),
+          bootPaths = scalaInstance.value.allJars.map(file => Paths.get(file.getAbsolutePath()))
         )
       )
 
@@ -210,7 +212,15 @@ object ExerciseCompilerPlugin extends AutoPlugin {
             .flatMap(analysisIn match {
               case analysis: Analysis => analysis.relations.definesClass
             })
-            .map { file => (file.getPath, IO.read(file))
+            .map { file =>
+              (
+                file.name(),
+                IO.read(
+                  new File(
+                    (baseDir.getParentFile() +: file.names().tail).mkString("/")
+                  )
+                )
+              )
             }
 
           captureStdStreams(

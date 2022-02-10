@@ -56,7 +56,6 @@ lazy val compiler = (project in file("compiler"))
     libraryDependencies ++= Seq(
       "org.scala-exercises" %% "runtime" % V.runtime,
       "org.scala-lang" % "scala-compiler" % scalaVersion.value,
-      "org.scala-lang.modules" %% "scala-collection-compat" % V.collectioncompat,
       "org.typelevel"          %% "cats-core"               % V.cats % Compile,
       "org.http4s"             %% "http4s-blaze-client"     % V.http4s,
       "org.http4s"             %% "http4s-circe"            % V.http4s,

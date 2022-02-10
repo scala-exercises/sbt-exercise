@@ -14,7 +14,8 @@ lazy val content = (project in file("content"))
       "org.scala-exercises" %% "runtime"           % "0.7.0",
       "org.scala-exercises" %% "exercise-compiler" % pluginVersion changing (),
       "org.scala-exercises" %% "definitions"       % pluginVersion changing ()
-    )
+    ),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "2.0.1"
   )
 
 lazy val contentInPackages = (project in file("contentinpackages"))
@@ -29,7 +30,8 @@ lazy val contentInPackages = (project in file("contentinpackages"))
       "org.scala-exercises" %% "runtime"           % "0.7.0",
       "org.scala-exercises" %% "exercise-compiler" % pluginVersion changing (),
       "org.scala-exercises" %% "definitions"       % pluginVersion changing ()
-    )
+    ),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "2.0.1"
   )
 
 lazy val check = (project in file("check"))

@@ -41,5 +41,6 @@ lazy val check = (project in file("check"))
     resolvers ++= Seq(
       Resolver.sonatypeRepo("snapshots"),
       Resolver.defaultLocal
-    )
+    ),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "2.0.1"
   )

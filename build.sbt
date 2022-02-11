@@ -12,16 +12,9 @@ addCommandAlias(
 addCommandAlias("ci-docs", ";github; mdoc; headerCreateAll")
 addCommandAlias("ci-publish", ";github; ci-release")
 
-def scalaVersionSuffix(scalaVersion: String) = CrossVersion.partialVersion(scalaVersion) match {
-  case Some((2, 12)) => "2.12"
-  case Some((2, 13)) => "2.13"
-  case s             => throw new Exception("$s")
-}
-
 lazy val V = new {
   val cats: String                = "2.7.0"
   val catsEffect: String          = "3.3.4"
-  val collectioncompat: String    = "2.6.0"
   val github4s: String            = "0.30.0"
   val http4s: String              = "0.23.8"
   val runtime: String             = "0.7.0"

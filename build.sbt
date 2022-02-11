@@ -98,7 +98,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
       "org.typelevel" %% "cats-core"              % V.cats,
       "org.typelevel" %% "cats-kernel"            % V.cats
     ),
-    // addCompilerPlugin("org.scalamacros" % "paradise" % V.scalamacros cross CrossVersion.full),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.0.6",
     // Leverage build info to populate compiler classpath--
     compilerClasspath := { (compiler / Compile / fullClasspath) }.value,
     buildInfoObject   := "Meta",

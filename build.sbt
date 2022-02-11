@@ -14,49 +14,61 @@ addCommandAlias("ci-publish", ";github; ci-release")
 
 lazy val V = new {
   val cats: String                = "2.7.0"
-  val collectioncompat: String    = "2.6.0"
+  val catsEffect: String          = "3.3.4"
   val github4s: String            = "0.30.0"
   val http4s: String              = "0.23.8"
   val runtime: String             = "0.7.0"
+  val sbtIO                       = "1.6.0"
   val scala: String               = "2.13.8"
   val scala212: String            = "2.12.15"
   val scalacheck: String          = "1.15.4"
   val scalacheckShapeless: String = "1.3.0"
   val scalamacros: String         = "2.1.1"
   val scalariform: String         = "0.2.10"
-  val scalatest: String           = "3.2.10"
+  val scalatest: String           = "3.2.11"
+  val scalaXml: String            = "2.0.1"
+  val shapeless: String           = "2.3.7"
 }
 
 lazy val definitions = (project in file("definitions"))
   .settings(name := "definitions")
   .settings(
-    crossScalaVersions := Seq(V.scala212, V.scala),
+    crossScalaVersions := Seq(V.scala, V.scala212),
     libraryDependencies ++= Seq(
       "org.typelevel"              %% "cats-core"                 % V.cats,
-      "org.scalatest"              %% "scalatest"                 % V.scalatest,
       "org.scalacheck"             %% "scalacheck"                % V.scalacheck,
-      "com.github.alexarchambault" %% "scalacheck-shapeless_1.15" % V.scalacheckShapeless
-    )
+      "com.github.alexarchambault" %% "scalacheck-shapeless_1.15" % V.scalacheckShapeless,
+      "org.scalatest"              %% "scalatest-core"            % V.scalatest,
+      "com.chuusai"                %% "shapeless"                 % V.shapeless
+    ),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "2.0.1"
   )
 
 lazy val compiler = (project in file("compiler"))
   .settings(name := "exercise-compiler")
   .settings(
     exportJars         := true,
-    crossScalaVersions := Seq(V.scala212, V.scala),
+    crossScalaVersions := Seq(V.scala, V.scala212),
     scalacOptions -= "-Xfatal-warnings",
     libraryDependencies ++= Seq(
-      "org.scala-exercises" %% "runtime" % V.runtime exclude ("org.scala-lang.modules", "scala-collection-compat"),
-      "org.scala-lang"          % "scala-compiler"          % scalaVersion.value,
-      "org.scala-lang.modules" %% "scala-collection-compat" % V.collectioncompat,
-      "org.typelevel"          %% "cats-core"               % V.cats      % Compile,
-      "org.http4s"             %% "http4s-blaze-client"     % V.http4s,
-      "org.http4s"             %% "http4s-circe"            % V.http4s,
-      "com.47deg"              %% "github4s"                % V.github4s,
-      "org.scalariform"        %% "scalariform"             % V.scalariform,
-      "org.typelevel"          %% "cats-laws"               % V.cats      % Test,
-      "org.scalatest"          %% "scalatest"               % V.scalatest % Test
-    )
+      "org.scala-exercises"    %% "runtime"             % V.runtime,
+      "org.scala-lang"          % "scala-compiler"      % scalaVersion.value,
+      "org.scala-lang"          % "scala-reflect"       % scalaVersion.value,
+      "org.scala-lang.modules" %% "scala-xml"           % V.scalaXml,
+      "org.typelevel"          %% "cats-core"           % V.cats      % Compile,
+      "org.http4s"             %% "http4s-blaze-client" % V.http4s,
+      "org.http4s"             %% "http4s-client"       % V.http4s,
+      "com.47deg"              %% "github4s"            % V.github4s,
+      "org.scalariform"        %% "scalariform"         % V.scalariform,
+      "org.typelevel"          %% "cats-kernel"         % V.cats,
+      "org.typelevel"          %% "cats-laws"           % V.cats      % Test,
+      "org.typelevel"          %% "cats-effect"         % V.catsEffect,
+      "org.typelevel"          %% "cats-effect-kernel"  % V.catsEffect,
+      "org.scalatest"          %% "scalatest-core"      % V.scalatest % Test,
+      "org.scalatest"          %% "scalatest"           % V.scalatest % Test
+    ),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "2.0.1",
+    unusedCompileDependenciesFilter -= moduleFilter("org.scala-lang", "scala-compiler")
   )
   .dependsOn(definitions)
 
@@ -67,8 +79,26 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
   .settings(
     scalacOptions -= "-Xfatal-warnings",
     scalacOptions += "-Ypartial-unification",
-    libraryDependencies += "org.typelevel" %% "cats-core" % V.cats % Compile,
-    addCompilerPlugin("org.scalamacros" % "paradise" % V.scalamacros cross CrossVersion.full),
+    libraryDependencies ++= Seq(
+      "org.scala-sbt" %% "actions"                % sbtVersion.value,
+      "org.scala-sbt" %% "collections"            % sbtVersion.value,
+      "org.scala-sbt"  % "compiler-interface"     % sbtVersion.value,
+      "org.scala-sbt" %% "core-macros"            % sbtVersion.value,
+      "org.scala-sbt" %% "io"                     % V.sbtIO,
+      "org.scala-sbt" %% "librarymanagement-core" % sbtVersion.value,
+      "org.scala-sbt" %% "main"                   % sbtVersion.value,
+      "org.scala-sbt" %% "main-settings"          % sbtVersion.value,
+      "org.scala-sbt"  % "sbt"                    % sbtVersion.value,
+      "org.scala-sbt" %% "task-system"            % sbtVersion.value,
+      "org.scala-sbt" %% "util-logging"           % sbtVersion.value,
+      "org.scala-sbt" %% "util-position"          % sbtVersion.value,
+      "org.scala-sbt" %% "zinc-apiinfo"           % sbtVersion.value,
+      "org.scala-sbt" %% "zinc-classpath"         % sbtVersion.value,
+      "org.scala-sbt" %% "zinc-core"              % sbtVersion.value,
+      "org.typelevel" %% "cats-core"              % V.cats,
+      "org.typelevel" %% "cats-kernel"            % V.cats
+    ),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.0.6",
     // Leverage build info to populate compiler classpath--
     compilerClasspath := { (compiler / Compile / fullClasspath) }.value,
     buildInfoObject   := "Meta",

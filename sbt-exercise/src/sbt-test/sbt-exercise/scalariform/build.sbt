@@ -9,6 +9,7 @@ lazy val root = (project in file("."))
     ),
     libraryDependencies ++= Seq(
       "org.scala-exercises" %% "exercise-compiler" % pluginVersion changing ()
-    )
+    ),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "2.0.1"
   )
   .enablePlugins(ExerciseCompilerPlugin)

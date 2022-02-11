@@ -11,10 +11,11 @@ lazy val content = (project in file("content"))
       Resolver.defaultLocal
     ),
     libraryDependencies ++= Seq(
-      "org.scala-exercises" %% "runtime"           % "0.6.0",
+      "org.scala-exercises" %% "runtime"           % "0.7.0",
       "org.scala-exercises" %% "exercise-compiler" % pluginVersion changing (),
       "org.scala-exercises" %% "definitions"       % pluginVersion changing ()
-    )
+    ),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "2.0.1"
   )
 
 lazy val contentInPackages = (project in file("contentinpackages"))
@@ -26,10 +27,11 @@ lazy val contentInPackages = (project in file("contentinpackages"))
       Resolver.defaultLocal
     ),
     libraryDependencies ++= Seq(
-      "org.scala-exercises" %% "runtime"           % "0.6.0",
+      "org.scala-exercises" %% "runtime"           % "0.7.0",
       "org.scala-exercises" %% "exercise-compiler" % pluginVersion changing (),
       "org.scala-exercises" %% "definitions"       % pluginVersion changing ()
-    )
+    ),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "2.0.1"
   )
 
 lazy val check = (project in file("check"))
@@ -39,5 +41,6 @@ lazy val check = (project in file("check"))
     resolvers ++= Seq(
       Resolver.sonatypeRepo("snapshots"),
       Resolver.defaultLocal
-    )
+    ),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "2.0.1"
   )

@@ -33,7 +33,7 @@ lazy val V = new {
 lazy val definitions = (project in file("definitions"))
   .settings(name := "definitions")
   .settings(
-    crossScalaVersions := Seq(V.scala),
+    crossScalaVersions := Seq(V.scala, V.scala212),
     libraryDependencies ++= Seq(
       "org.typelevel"              %% "cats-core"                 % V.cats,
       "org.scalacheck"             %% "scalacheck"                % V.scalacheck,
@@ -48,7 +48,7 @@ lazy val compiler = (project in file("compiler"))
   .settings(name := "exercise-compiler")
   .settings(
     exportJars         := true,
-    crossScalaVersions := Seq(V.scala),
+    crossScalaVersions := Seq(V.scala, V.scala212),
     scalacOptions -= "-Xfatal-warnings",
     libraryDependencies ++= Seq(
       "org.scala-exercises"    %% "runtime"             % V.runtime,

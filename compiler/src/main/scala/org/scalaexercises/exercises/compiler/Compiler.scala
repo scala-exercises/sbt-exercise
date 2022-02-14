@@ -290,7 +290,7 @@ case class Compiler() {
         val libraryAsDependency =
           s"${buildMetaInfo.organization}:${buildMetaInfo.name}_${buildMetaInfo.scalaVersion
             .substring(0, 4)}:${buildMetaInfo.version}"
-        List(libraryAsDependency) // :: buildMetaInfo.libraryDependencies.toList
+        libraryAsDependency :: buildMetaInfo.libraryDependencies.toList
         // Evaluator can resolve transitive dependencies, the reason of only passing the library as a dependency
       }
 

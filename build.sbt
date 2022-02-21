@@ -9,6 +9,7 @@ addCommandAlias(
   "ci-test",
   ";scalafmtCheckAll; scalafmtSbtCheck; +test; +publishLocal; sbt-exercise/scripted"
 )
+
 addCommandAlias("ci-docs", ";github; mdoc; headerCreateAll")
 addCommandAlias("ci-publish", ";github; ci-release")
 
@@ -51,9 +52,8 @@ lazy val compiler = (project in file("compiler"))
     crossScalaVersions := Seq(V.scala, V.scala212),
     scalacOptions -= "-Xfatal-warnings",
     libraryDependencies ++= Seq(
-      "org.scala-exercises"    %% "runtime"             % V.runtime,
+      "org.scala-exercises" %% "runtime" % V.runtime exclude ("org.scala-lang.modules", "scala-collection-compat"),
       "org.scala-lang"          % "scala-compiler"      % scalaVersion.value,
-      "org.scala-lang"          % "scala-reflect"       % scalaVersion.value,
       "org.scala-lang.modules" %% "scala-xml"           % V.scalaXml,
       "org.typelevel"          %% "cats-core"           % V.cats      % Compile,
       "org.http4s"             %% "http4s-blaze-client" % V.http4s,
@@ -66,7 +66,9 @@ lazy val compiler = (project in file("compiler"))
       "org.typelevel"          %% "cats-effect-kernel"  % V.catsEffect,
       "org.scalatest"          %% "scalatest-core"      % V.scalatest % Test,
       "org.scalatest"          %% "scalatest"           % V.scalatest % Test
-    ),
+    ) ++ (if (scalaVersion.value == V.scala)
+            Seq("org.scala-lang" % "scala-reflect" % scalaVersion.value)
+          else Seq.empty),
     dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "2.0.1",
     unusedCompileDependenciesFilter -= moduleFilter("org.scala-lang", "scala-compiler")
   )

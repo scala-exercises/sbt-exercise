@@ -42,7 +42,7 @@ lazy val definitions = (project in file("definitions"))
       "org.scalatest"              %% "scalatest-core"            % V.scalatest,
       "com.chuusai"                %% "shapeless"                 % V.shapeless
     ),
-    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "2.0.1"
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.3.0"
   )
 
 lazy val compiler = (project in file("compiler"))
@@ -69,7 +69,7 @@ lazy val compiler = (project in file("compiler"))
     ) ++ (if (scalaVersion.value == V.scala)
             Seq("org.scala-lang" % "scala-reflect" % scalaVersion.value)
           else Seq.empty),
-    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "2.0.1",
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.3.0",
     unusedCompileDependenciesFilter -= moduleFilter("org.scala-lang", "scala-compiler")
   )
   .dependsOn(definitions)
@@ -100,7 +100,7 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
       "org.typelevel" %% "cats-core"              % V.cats,
       "org.typelevel" %% "cats-kernel"            % V.cats
     ),
-    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.0.6",
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.3.0",
     // Leverage build info to populate compiler classpath--
     compilerClasspath := { (compiler / Compile / fullClasspath) }.value,
     buildInfoObject   := "Meta",

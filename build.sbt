@@ -36,7 +36,8 @@ lazy val definitions = (project in file("definitions"))
       "org.scalatest"              %% "scalatest"                 % V.scalatest,
       "org.scalacheck"             %% "scalacheck"                % V.scalacheck,
       "com.github.alexarchambault" %% "scalacheck-shapeless_1.15" % V.scalacheckShapeless
-    )
+    ),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.3.0"
   )
 
 lazy val compiler = (project in file("compiler"))
@@ -56,7 +57,8 @@ lazy val compiler = (project in file("compiler"))
       "org.scalariform"        %% "scalariform"             % V.scalariform,
       "org.typelevel"          %% "cats-laws"               % V.cats      % Test,
       "org.scalatest"          %% "scalatest"               % V.scalatest % Test
-    )
+    ),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.3.0"
   )
   .dependsOn(definitions)
 
@@ -78,7 +80,8 @@ lazy val `sbt-exercise` = (project in file("sbt-exercise"))
       BuildInfoKey.map(compilerClasspath) { case (_, classFiles) ⇒
         ("compilerClasspath", classFiles.map(_.data))
       }
-    )
+    ),
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.3.0"
   )
   .settings(
     scriptedLaunchOpts := {

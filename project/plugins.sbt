@@ -7,4 +7,4 @@ addSbtPlugin("com.alejandrohdezma"       % "sbt-github"               % "0.11.6"
 addSbtPlugin("com.alejandrohdezma"       % "sbt-github-header"        % "0.11.6")
 addSbtPlugin("com.alejandrohdezma"       % "sbt-github-mdoc"          % "0.11.6")
 addSbtPlugin("com.alejandrohdezma"       % "sbt-remove-test-from-pom" % "0.1.0")
-addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat"             % "0.4.1")
+addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat"             % "0.4.2")
